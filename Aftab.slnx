@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/App/">
+    <Project Path="src/App/Aftab.App.Api/Aftab.App.Api.csproj" />
+    <Project Path="src/App/Aftab.App.Application/Aftab.App.Application.csproj" />
+    <Project Path="src/App/Aftab.App.Domain/Aftab.App.Domain.csproj" />
+    <Project Path="src/App/Aftab.App.Host/Aftab.App.Host.csproj" />
+    <Project Path="src/App/Aftab.App.Infrastructure/Aftab.App.Infrastructure.csproj" />
+    <Project Path="src/App/Aftab.App.Presentation/Aftab.App.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared/Aftab.Shared.Api/Aftab.Shared.Api.csproj" />
+    <Project Path="src/Shared/Aftab.Shared.Application/Aftab.Shared.Application.csproj" />
+    <Project Path="src/Shared/Aftab.Shared.Domain/Aftab.Shared.Domain.csproj" />
+    <Project Path="src/Shared/Aftab.Shared.Infrastructure/Aftab.Shared.Infrastructure.csproj" />
+    <Project Path="src/Shared/Aftab.Shared.Presentation/Aftab.Shared.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+</Solution>

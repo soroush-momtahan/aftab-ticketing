@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Aftab.Shared.Presentation\Aftab.Shared.Presentation.csproj" />
+    <ProjectReference Include="..\Aftab.App.Application\Aftab.App.Application.csproj" />
+  </ItemGroup>
+</Project>
