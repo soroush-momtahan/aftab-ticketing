@@ -2,5 +2,7 @@
 
 public enum IdType
 {
-    
+    Tkt,
+    RplTkt,
+    Prn
 }
