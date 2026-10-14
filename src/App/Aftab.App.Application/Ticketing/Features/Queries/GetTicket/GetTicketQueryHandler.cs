@@ -25,37 +25,6 @@ internal sealed class GetTicketQueryHandler(
             return Result.Failure<GetTicketQuery.Result>(TicketingErrors.NotFound(request.TicketId));
         }
 
-        return ToResult(ticketView);
-    }
-
-    private static GetTicketQuery.Result ToResult(TicketView ticketView)
-    {
-        
-        var ticketDto = new GetTicketQuery.TicketDto(
-            ticketView.Id,
-            ticketView.DisplayName,
-            ticketView.Title,
-            ticketView.Content,
-            ticketView.Priority,
-            ticketView.Status,
-            ticketView.Department,
-            ticketView.CreatedAt,
-            ticketView.ModifiedAt,
-            ticketView.DeletedAt);
-
-        var replyDtos = ticketView.Replies.Select(ToReplyDto).ToList();
-
-        return new GetTicketQuery.Result(
-            ticketDto,
-            replyDtos);
-    }
-
-    private static GetTicketQuery.ReplyTicketDto ToReplyDto(TicketView.ReplyTicketView replyTicketView)
-    {
-        return new GetTicketQuery.ReplyTicketDto(
-            replyTicketView.Id,
-            replyTicketView.ReplierId,
-            replyTicketView.ReplierDisplayName,
-            replyTicketView.Content);
+        return GetTicketQuery.ToResult(ticketView);
     }
 }

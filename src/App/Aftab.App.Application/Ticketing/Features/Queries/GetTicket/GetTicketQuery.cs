@@ -1,3 +1,4 @@
+using Aftab.App.Application.Ticketing.Services;
 using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.Shared.Application.Cqrs;
 
@@ -27,4 +28,35 @@ public record GetTicketQuery(
         DateTime CreatedAt,
         DateTime? ModifiedAt,
         DateTime? DeletedAt);
+    
+    public static Result ToResult(TicketView ticketView)
+    {
+        
+        var ticketDto = new TicketDto(
+            ticketView.Id,
+            ticketView.DisplayName,
+            ticketView.Title,
+            ticketView.Content,
+            ticketView.Priority,
+            ticketView.Status,
+            ticketView.Department,
+            ticketView.CreatedAt,
+            ticketView.ModifiedAt,
+            ticketView.DeletedAt);
+
+        var replyDtos = ticketView.Replies.Select(ToReplyDto).ToList();
+
+        return new GetTicketQuery.Result(
+            ticketDto,
+            replyDtos);
+    }
+
+    private static ReplyTicketDto ToReplyDto(TicketView.ReplyTicketView replyTicketView)
+    {
+        return new ReplyTicketDto(
+            replyTicketView.Id,
+            replyTicketView.ReplierId,
+            replyTicketView.ReplierDisplayName,
+            replyTicketView.Content);
+    }
 }
