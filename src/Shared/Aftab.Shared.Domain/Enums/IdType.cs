@@ -4,5 +4,6 @@ public enum IdType
 {
     Tkt,
     RplTkt,
-    Prn
+    Prn,
+    Idn,
 }

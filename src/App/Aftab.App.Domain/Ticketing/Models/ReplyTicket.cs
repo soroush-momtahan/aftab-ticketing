@@ -1,3 +1,4 @@
+using Aftab.App.Domain.People.ValueObjects;
 using Aftab.App.Domain.Ticketing.ValueObjects;
 using Aftab.Shared.Domain.Objects;
 
