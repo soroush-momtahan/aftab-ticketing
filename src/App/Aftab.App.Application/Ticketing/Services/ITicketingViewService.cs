@@ -17,8 +17,8 @@ public class TicketView
     public TicketStatus Status { get; set; }
     public TicketDepartment Department { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime ModifiedAt { get; set; }
-    public DateTime DeletedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
     public List<ReplyTicketView> Replies { get; set; }
     public class ReplyTicketView
     {
@@ -43,7 +43,7 @@ public class TicketView
             Replies = []
         };
     }
-    public static TicketView.ReplyTicketView ToReplyTicketView(ReplyTicket replyTicket, Person person)
+    public static ReplyTicketView ToReplyTicketView(ReplyTicket replyTicket, Person person)
     {
         string ticketerRole = person.RoleType == RoleType.Agent ? "مدیر" : "کاربر";
         return new TicketView.ReplyTicketView()
@@ -60,6 +60,15 @@ public interface ITicketingViewService
 {
     Task CreateAsync(TicketView ticketView, CancellationToken cancellationToken);
     Task<TicketView?> GetByIdAsync(Guid ticketId, CancellationToken cancellationToken);
+    Task<List<TicketView>> GetAllAsync(
+        string? searchString,
+        bool sortByPriority,
+        TicketDepartment? filterByDepartment,
+        TicketStatus? filterByStatus,
+        string? filterByPersonId,
+        int pageIndex,
+        int pageSize,
+        CancellationToken cancellationToken);
     void Update(TicketView ticketView);
     void Delete(TicketView ticketView);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
