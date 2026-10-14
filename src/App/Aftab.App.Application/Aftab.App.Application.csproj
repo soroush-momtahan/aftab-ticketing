@@ -4,7 +4,6 @@
     <ProjectReference Include="..\Aftab.App.Domain\Aftab.App.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Identity\Services\" />
-    <Folder Include="Ticketing\EventHandlers\" />
+    <Folder Include="Identity\Features\" />
   </ItemGroup>
 </Project>

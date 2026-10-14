@@ -17,11 +17,11 @@ public class Ticket : Aggregate<TicketId>
     public TicketStatus Status { get; private set; }
     public TicketPriority Priority { get; init; }
     public TicketDepartment Department { get; init; }
-    
+
     private readonly List<ReplyTicket> _replyTickets = [];
     public IReadOnlyList<ReplyTicket> ReplyTickets => _replyTickets.AsReadOnly();
-    
-    private Ticket() {}
+
+    private Ticket() { }
 
     private Ticket(
         PersonId personId,
@@ -64,11 +64,16 @@ public class Ticket : Aggregate<TicketId>
         AddDomainEvent(new TicketStatusUpdatedEvent(Id));
     }
 
-    public void AddReply(string content, PersonId replierId)
+    public void AddReply(string content, PersonId replierId, TicketStatus? status = TicketStatus.InProgress)
     {
         var replyTicket = ReplyTicket.Create(Id, replierId, content);
         _replyTickets.Add(replyTicket);
         UpdatedAt = DateTime.UtcNow;
+        if (replierId != PersonId)
+        {
+            Status = (TicketStatus)status!;
+        }
+
         AddDomainEvent(new ReplyTicketAddedEvent(Id, replyTicket.Id));
     }
 
@@ -79,6 +84,7 @@ public class Ticket : Aggregate<TicketId>
         {
             return Result.Failure(TicketingErrors.ReplyTicketNotFound(replyTicketId));
         }
+
         replyTicket.UpdateContent(newContent);
         UpdatedAt = DateTime.UtcNow;
         AddDomainEvent(new ReplyTicketContentUpdatedEvent(Id, replyTicketId));
@@ -92,6 +98,7 @@ public class Ticket : Aggregate<TicketId>
         {
             return Result.Failure(TicketingErrors.ReplyTicketNotFound(replyTicketId));
         }
+
         replyTicket.SoftDelete();
         AddDomainEvent(new ReplyTicketDeletedEvent(Id, replyTicketId));
         return Result.Success();
@@ -103,6 +110,7 @@ public class Ticket : Aggregate<TicketId>
         {
             return;
         }
+
         IsDeleted = true;
         UpdatedAt = DateTime.UtcNow;
         DeletedAt = DateTime.UtcNow;
