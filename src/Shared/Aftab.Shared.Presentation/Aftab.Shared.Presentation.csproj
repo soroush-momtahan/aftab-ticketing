@@ -1,5 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\Aftab.Shared.Application\Aftab.Shared.Application.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Aftab.Shared.Application\Aftab.Shared.Application.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MassTransit.Abstractions"/>
+    </ItemGroup>
 </Project>

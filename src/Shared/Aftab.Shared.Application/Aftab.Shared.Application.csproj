@@ -1,5 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\Aftab.Shared.Domain\Aftab.Shared.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Aftab.Shared.Domain\Aftab.Shared.Domain.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Pagination\.idea\.gitignore"/>
+        <Content Include="Pagination\.idea\encodings.xml"/>
+        <Content Include="Pagination\.idea\indexLayout.xml"/>
+        <Content Include="Pagination\.idea\vcs.xml"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+        <PackageReference Include="MediatR"/>
+        <PackageReference Include="Serilog.AspNetCore"/>
+    </ItemGroup>
 </Project>

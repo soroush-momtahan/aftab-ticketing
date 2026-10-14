@@ -1,0 +1,12 @@
+ProductId productId = PrefixedGuidV3.New<ProductId>();
+Guid id = productId;
+Result<ProductId> result = PrefixedGuidV3.From<ProductId>("prd_019c0ac3-5dae-7af2-9425-daaeb395ae0c");
+Console.WriteLine(PrefixedGuidV3.GetPrefix(typeof(ProductId)));
+Console.WriteLine(productId);
+Console.WriteLine(result.Value);
+Console.WriteLine(id);
+var json = JsonConvert.SerializeObject(productId, new PrefixedGuidJsonConverter());
+Console.WriteLine(json);
+
+var json2 = JsonConvert.DeserializeObject<ProductId>(json, new PrefixedGuidJsonConverter());
+Console.WriteLine(json2);

@@ -1,5 +1,6 @@
-﻿namespace Aftab.App.Domain;
+namespace Aftab.App.Domain;
 
 public class Class1
 {
+    
 }
