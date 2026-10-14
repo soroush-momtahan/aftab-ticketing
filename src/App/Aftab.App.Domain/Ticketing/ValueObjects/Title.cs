@@ -16,8 +16,8 @@ public record Title
         title = title.Trim();
         return title.Length switch
         {
-            < MinLenght => Result.Failure<Title>(TicketErrors.TitleIsTooShort),
-            > MaxLenght => Result.Failure<Title>(TicketErrors.TitleIsTooLong),
+            < MinLenght => Result.Failure<Title>(TicketingErrors.TitleIsTooShort),
+            > MaxLenght => Result.Failure<Title>(TicketingErrors.TitleIsTooLong),
             _ => new Title(title)
         };
     }

@@ -3,7 +3,7 @@ using Aftab.Shared.Domain.Errors;
 
 namespace Aftab.App.Domain.Ticketing.Errors;
 
-public static class TicketErrors
+public static class TicketingErrors
 {
     public static readonly Error TitleIsTooShort = new(
         "Ticket.TitleIsTooShort",

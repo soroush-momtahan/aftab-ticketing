@@ -10,8 +10,8 @@ public static class PeopleErrors
         $"نام نمی تواند کمتر از {FullName.MinLenght} حرف باشد.",
         ErrorType.Validation);
 
-    public static readonly Error UserNotFound = new(
-        "Identity.UserNotFound",
+    public static readonly Error PersonNotFound = new(
+        "Identity.PersonNotFound",
         $"کاربر مورد نظر یافت نشد.",
         ErrorType.Validation);
 

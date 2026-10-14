@@ -77,7 +77,7 @@ public class Ticket : Aggregate<TicketId>
         ReplyTicket? replyTicket = _replyTickets.SingleOrDefault(x => x.Id == replyTicketId);
         if (replyTicket is null)
         {
-            return Result.Failure(TicketErrors.ReplyTicketNotFound(replyTicketId));
+            return Result.Failure(TicketingErrors.ReplyTicketNotFound(replyTicketId));
         }
         replyTicket.UpdateContent(newContent);
         UpdatedAt = DateTime.UtcNow;
@@ -90,7 +90,7 @@ public class Ticket : Aggregate<TicketId>
         ReplyTicket? replyTicket = _replyTickets.SingleOrDefault(x => x.Id == replyTicketId);
         if (replyTicket is null)
         {
-            return Result.Failure(TicketErrors.ReplyTicketNotFound(replyTicketId));
+            return Result.Failure(TicketingErrors.ReplyTicketNotFound(replyTicketId));
         }
         replyTicket.SoftDelete();
         AddDomainEvent(new ReplyTicketDeletedEvent(Id, replyTicketId));

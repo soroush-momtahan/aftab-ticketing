@@ -3,4 +3,8 @@
     <ProjectReference Include="..\..\Shared\Aftab.Shared.Application\Aftab.Shared.Application.csproj" />
     <ProjectReference Include="..\Aftab.App.Domain\Aftab.App.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Identity\Services\" />
+    <Folder Include="Ticketing\EventHandlers\" />
+  </ItemGroup>
 </Project>
