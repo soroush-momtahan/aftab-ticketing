@@ -1,4 +1,3 @@
-using Aftab.App.Domain.Identity.Errors;
 using Aftab.App.Domain.People.Errors;
 using Aftab.Shared.Domain.Results;
 

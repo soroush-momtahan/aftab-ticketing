@@ -7,21 +7,21 @@ using Aftab.Shared.Domain.Exceptions;
 namespace Aftab.App.Application.Ticketing.EventHandlers.TicketDeleted;
 
 internal sealed class DeleteTicketViewOnTicketDeletedEvent(
-    ITicketingViewService ticketingViewService)
+    ITicketingQueryService ticketingQueryService)
     : DomainEventHandler<TicketDeletedEvent>
 {
     public override async Task Handle(
         TicketDeletedEvent domainEvent, 
         CancellationToken cancellationToken = default)
     {
-        TicketView? ticketView = await ticketingViewService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
+        TicketView? ticketView = await ticketingQueryService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
         if (ticketView is null)
         {
             throw new AftabException(
                 nameof(DeleteTicketViewOnTicketDeletedEvent), 
                 TicketingErrors.NotFound(domainEvent.TicketId));
         }
-        ticketingViewService.Delete(ticketView);
-        await ticketingViewService.SaveChangesAsync(cancellationToken);
+        ticketingQueryService.Delete(ticketView);
+        await ticketingQueryService.SaveChangesAsync(cancellationToken);
     }
 }

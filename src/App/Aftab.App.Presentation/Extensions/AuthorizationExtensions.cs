@@ -1,5 +1,8 @@
 using System.Security.Claims;
 using Aftab.App.Domain.Identity.Enums;
+using Aftab.App.Presentation.Ticketing.Policies.ReplyTicketOwnerShip;
+using Aftab.App.Presentation.Ticketing.Policies.TicketOwnerShip;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -40,5 +43,15 @@ public static class AuthorizationExtensions
             
             return await next(context);
         });
+    }
+
+    public static void ConfigureTicketPolicy(AuthorizationPolicyBuilder policyBuilder)
+    {
+        policyBuilder.Requirements.Add(new TicketOwnershipRequirement(bypassRole: "Agent"));
+    }
+    
+    public static void ConfigureReplyTicketPolicy(AuthorizationPolicyBuilder policyBuilder)
+    {
+        policyBuilder.Requirements.Add(new ReplyTicketOwnerShipRequirement(bypassRole: "Agent"));
     }
 }

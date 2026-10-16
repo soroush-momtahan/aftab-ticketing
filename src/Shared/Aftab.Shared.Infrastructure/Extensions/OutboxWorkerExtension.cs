@@ -22,7 +22,7 @@ public static class OutboxWorkerExtension
     {
         builder
             .AddServiceDefaults()
-            .AddMessagingServices()
+            // .AddMessagingServices()
             .AddDomainEventHandlersWithIdempotency<TDbContext>(assemblyToScan)
             .AddConfigServices<TDbContext>(moduleName)
             .AddQuartzService();

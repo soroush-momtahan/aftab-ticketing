@@ -5,6 +5,7 @@
     <Project Path="src/App/Aftab.App.Domain/Aftab.App.Domain.csproj" />
     <Project Path="src/App/Aftab.App.Host/Aftab.App.Host.csproj" />
     <Project Path="src/App/Aftab.App.Infrastructure/Aftab.App.Infrastructure.csproj" />
+    <Project Path="src/App/Aftab.App.OutboxWorker/Aftab.App.OutboxWorker.csproj" />
     <Project Path="src/App/Aftab.App.Presentation/Aftab.App.Presentation.csproj" />
   </Folder>
   <Folder Name="/Shared/">

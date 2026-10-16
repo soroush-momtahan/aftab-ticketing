@@ -12,7 +12,7 @@ using Aftab.Shared.Domain.Exceptions;
 namespace Aftab.App.Application.Ticketing.EventHandlers.ReplyTicketAdded;
 
 internal sealed class UpdateTicketViewOnReplyTicketAddedEvent(
-    ITicketingViewService ticketingViewService,
+    ITicketingQueryService ticketingQueryService,
     ITicketingRepository ticketingRepository,
     IPeopleRepository peopleRepository) : DomainEventHandler<ReplyTicketAddedEvent>
 {
@@ -27,7 +27,7 @@ internal sealed class UpdateTicketViewOnReplyTicketAddedEvent(
                 TicketingErrors.NotFound(domainEvent.TicketId));
         }
         
-        TicketView? ticketView = await ticketingViewService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
+        TicketView? ticketView = await ticketingQueryService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
         if (ticketView is null)
         {
             throw new AftabException(
@@ -35,7 +35,7 @@ internal sealed class UpdateTicketViewOnReplyTicketAddedEvent(
                 TicketingErrors.NotFound(domainEvent.TicketId));
         }
 
-        ReplyTicket? replyTicket = ticket.ReplyTickets.SingleOrDefault(x => x.TicketId == domainEvent.TicketId);
+        ReplyTicket? replyTicket = ticket.ReplyTickets.SingleOrDefault(x => x.Id == domainEvent.ReplyTicketId);
         if (replyTicket is null)
         {
             throw new AftabException(
@@ -52,8 +52,9 @@ internal sealed class UpdateTicketViewOnReplyTicketAddedEvent(
         }
         
         ticketView.Replies.Add(TicketView.ToReplyTicketView(replyTicket, replierPerson));
-        ticketingViewService.Update(ticketView);
-        await ticketingViewService.SaveChangesAsync(cancellationToken);
+        ticketView.Status = ticket.Status;
+        ticketingQueryService.Update(ticketView);
+        await ticketingQueryService.SaveChangesAsync(cancellationToken);
     }
     
 }

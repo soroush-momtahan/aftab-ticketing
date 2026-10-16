@@ -9,4 +9,14 @@
         <UserSecretsId>d67e29de-6386-4cf3-8fb3-d6074c61a096</UserSecretsId>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Aftab.App.Api\Aftab.App.Api.csproj" />
+      <ProjectReference Include="..\Aftab.App.OutboxWorker\Aftab.App.OutboxWorker.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+        <PackageReference Include="Aspire.Hosting.Redis" />
+    </ItemGroup>
+
 </Project>

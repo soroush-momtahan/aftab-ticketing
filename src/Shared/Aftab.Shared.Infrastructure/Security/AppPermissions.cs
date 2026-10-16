@@ -2,24 +2,12 @@ namespace Aftab.Shared.Infrastructure.Security;
 
 public static class AppPermissions
 {
-    public static class Catalog
+    public static class Tickets
     {
-        public const string Create = "catalog:create";
-        public const string Read = "catalog:read";
-        public const string Update = "catalog:update";
-        public const string Delete = "catalog:delete";
-    }
-
-    public static class Orders
-    {
-        public const string View = "orders:view";
-        public const string Manage = "orders:manage";
-    }
-    
-    public static class Files
-    {
-        public const string ViewWholesalePrice = "files:view-whole-sale-price";
-        public const string Create = "files:Create";
+        public const string Create = "Tickets:create";
+        public const string Read = "Tickets:read";
+        public const string Update = "Tickets:update";
+        public const string Delete = "Tickets:delete";
     }
 
     // متدی برای گرفتن تمام پرمیشن‌ها (برای زمان Seeding به درد می‌خورد)

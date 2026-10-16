@@ -12,7 +12,7 @@ using Aftab.Shared.Domain.Exceptions;
 namespace Aftab.App.Application.Ticketing.EventHandlers.TicketCreated;
 
 internal sealed class CreateTicketViewOnTicketCreatedEvent(
-    ITicketingViewService ticketingViewService,
+    ITicketingQueryService ticketingQueryService,
     ITicketingRepository ticketingRepository,
     IPeopleRepository peopleRepository) : DomainEventHandler<TicketCreatedEvent>
 {
@@ -35,7 +35,7 @@ internal sealed class CreateTicketViewOnTicketCreatedEvent(
                 PeopleErrors.PersonNotFound);
         }
         
-        await ticketingViewService.CreateAsync(TicketView.ToTicketView(ticket, person), cancellationToken);
-        await ticketingViewService.SaveChangesAsync(cancellationToken);
+        await ticketingQueryService.CreateAsync(TicketView.ToTicketView(ticket, person), cancellationToken);
+        await ticketingQueryService.SaveChangesAsync(cancellationToken);
     }
 }

@@ -19,6 +19,7 @@ public record GetTicketQuery(
 
     public record TicketDto(
         string Id,
+        string PersonId,
         string DisplayName,
         string Title,
         string Content,
@@ -34,6 +35,7 @@ public record GetTicketQuery(
         
         var ticketDto = new TicketDto(
             ticketView.Id,
+            ticketView.PersonId,
             ticketView.DisplayName,
             ticketView.Title,
             ticketView.Content,

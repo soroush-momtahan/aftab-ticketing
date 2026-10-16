@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Aftab.Shared.Api\Aftab.Shared.Api.csproj" />
-    <ProjectReference Include="..\Aftab.App.Infrastructure\Aftab.App.Infrastructure.csproj" />
-    <ProjectReference Include="..\Aftab.App.Presentation\Aftab.App.Presentation.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Shared\Aftab.Shared.Api\Aftab.Shared.Api.csproj"/>
+        <ProjectReference Include="..\Aftab.App.Infrastructure\Aftab.App.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Aftab.App.Presentation\Aftab.App.Presentation.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>

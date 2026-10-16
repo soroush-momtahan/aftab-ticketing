@@ -7,5 +7,5 @@ public interface ITicketingRepository
 {
     Task CreateAsync(Ticket ticket, CancellationToken cancellationToken);
     Task<Ticket?> GetByIdAsync(TicketId ticketId, CancellationToken cancellationToken);
-    void SoftDelete(TicketId ticketId);
+    Task<ReplyTicket?> GetReplyTicketByIdAsync(ReplyTicketId replyTicketId, CancellationToken cancellationToken);
 }

@@ -10,7 +10,6 @@ public class Person : Aggregate<PersonId>
     public const int MaxPasswordLength = 128;
     public const int MinPasswordUniqueChars = 4;
     
-    public IdentityId IdentityId { get; private set; }
     public FullName FullName { get; private set; }
     public Mobile Mobile { get; private set; }
     public RoleType RoleType { get; private set; }
@@ -18,22 +17,18 @@ public class Person : Aggregate<PersonId>
     private Person(){}
 
     private Person(
-        IdentityId identityUserId,
         FullName fullName, 
         Mobile mobile)
     {
-        IdentityId = identityUserId;
         FullName = fullName;
         Mobile = mobile;
     }
 
     public static Person Create(
-        IdentityId identityUserId,
         FullName fullName, 
         Mobile mobile)
     {
         return new Person(
-            identityUserId,
             fullName, 
             mobile);
     }

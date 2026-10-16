@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Aftab.Shared.Application\Aftab.Shared.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Aftab.Shared.Infrastructure\Aftab.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Aftab.App.Application\Aftab.App.Application.csproj" />
   </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Data\Migrations\ReadDb\" />
+    </ItemGroup>
 </Project>

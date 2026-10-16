@@ -9,7 +9,7 @@ using Aftab.Shared.Domain.Exceptions;
 namespace Aftab.App.Application.Ticketing.EventHandlers.TicketContentUpdated;
 
 internal sealed class UpdateTicketViewOnTicketContentUpdatedEvent(
-    ITicketingViewService ticketingViewService,
+    ITicketingQueryService ticketingQueryService,
     ITicketingRepository ticketingRepository)
     : DomainEventHandler<TicketContentUpdatedEvent>
 {
@@ -24,7 +24,7 @@ internal sealed class UpdateTicketViewOnTicketContentUpdatedEvent(
                  TicketingErrors.NotFound(domainEvent.TicketId));
          }
          
-         TicketView? ticketView = await ticketingViewService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
+         TicketView? ticketView = await ticketingQueryService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
          if (ticketView is null)
          {
              throw new AftabException(
@@ -33,7 +33,7 @@ internal sealed class UpdateTicketViewOnTicketContentUpdatedEvent(
          }
 
          ticketView.Content = ticket.Content;
-         ticketingViewService.Update(ticketView);
-         await ticketingViewService.SaveChangesAsync(cancellationToken);
+         ticketingQueryService.Update(ticketView);
+         await ticketingQueryService.SaveChangesAsync(cancellationToken);
     }
 }

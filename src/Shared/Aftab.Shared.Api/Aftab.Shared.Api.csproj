@@ -3,4 +3,8 @@
     <ProjectReference Include="..\Aftab.Shared.Infrastructure\Aftab.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Aftab.Shared.Presentation\Aftab.Shared.Presentation.csproj" />
   </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Swashbuckle.AspNetCore" />
+    </ItemGroup>
 </Project>

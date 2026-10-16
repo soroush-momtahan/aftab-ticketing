@@ -46,16 +46,14 @@ public sealed class SignupCommandHandler(
             return Result.Failure<SignupCommand.Result>(mobileOrError.Error);
         }
         
-        Result<IdentityUser> identityUserOrErrors = await identityService.SignupWithMobileAsync(mobile, command.Password);
+        var person = Person.Create(fullNameOrError.Value, mobileOrError.Value);
+        
+        Result<IdentityUser> identityUserOrErrors = await identityService.SignupWithMobileAsync(person.Id, mobile, command.Password);
         if (identityUserOrErrors.IsFailure)
         {
             throw new AftabException(nameof(identityService.SignupWithMobileAsync), identityUserOrErrors.Error);
         }
         
-        var identityUserId = new IdentityId(Guid.Parse(identityUserOrErrors.Value.Id));
-            
-        var person = Person.Create(identityUserId, fullNameOrError.Value, mobileOrError.Value);
-            
         await peopleRepository.CreateAsync(person, cancellationToken);
 
         string token = null;

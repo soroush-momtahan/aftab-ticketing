@@ -1,0 +1,20 @@
+using Microsoft.Extensions.DependencyInjection;
+using Otex.BuildingBlocks.Api.OptionsSetups;
+
+namespace Otex.BuildingBlocks.Api.Extensions;
+
+internal static class AuthenticationExtensions
+{
+    internal static IServiceCollection AddAuthenticationInternal(
+        this IServiceCollection services,
+        string authenticationServerName = "keycloak",
+        string realm = "otex")
+    {
+        services.AddAuthorization();
+        services.AddAuthentication()
+            .AddKeycloakJwtBearer(authenticationServerName, realm);
+        services.AddHttpContextAccessor();
+        services.ConfigureOptions<JwtBearerOptionsSetup>();
+        return services;
+    }
+}

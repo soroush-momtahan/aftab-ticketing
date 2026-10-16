@@ -9,7 +9,7 @@ using Aftab.Shared.Domain.Exceptions;
 namespace Aftab.App.Application.Ticketing.EventHandlers.ReplyTicketContentUpdated;
 
 internal sealed class UpdateTicketViewOnReplyTicketContentUpdatedEvent(
-    ITicketingViewService ticketingViewService,
+    ITicketingQueryService ticketingQueryService,
     ITicketingRepository ticketingRepository)
     : DomainEventHandler<ReplyTicketContentUpdatedEvent>
 {
@@ -25,7 +25,7 @@ internal sealed class UpdateTicketViewOnReplyTicketContentUpdatedEvent(
                 TicketingErrors.NotFound(domainEvent.TicketId));
         }
 
-        ReplyTicket? replyTicket = ticket.ReplyTickets.SingleOrDefault(x => x.ReplierId == domainEvent.ReplyTicketId);
+        ReplyTicket? replyTicket = ticket.ReplyTickets.SingleOrDefault(x => x.Id == domainEvent.ReplyTicketId);
         if (replyTicket is null)
         {
             throw new AftabException(
@@ -33,7 +33,7 @@ internal sealed class UpdateTicketViewOnReplyTicketContentUpdatedEvent(
                 TicketingErrors.ReplyTicketNotFound(domainEvent.ReplyTicketId));
         }
 
-        TicketView? ticketView = await ticketingViewService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
+        TicketView? ticketView = await ticketingQueryService.GetByIdAsync(domainEvent.TicketId, cancellationToken);
         if (ticketView is null)
         {
             throw new AftabException(
@@ -42,7 +42,7 @@ internal sealed class UpdateTicketViewOnReplyTicketContentUpdatedEvent(
         }
 
         TicketView.ReplyTicketView? replyTicketView = ticketView.Replies.SingleOrDefault(
-            x => x.ReplierId == domainEvent.ReplyTicketId);
+            x => x.Id == domainEvent.ReplyTicketId);
         if (replyTicketView is null)
         {
             throw new AftabException(
@@ -51,7 +51,7 @@ internal sealed class UpdateTicketViewOnReplyTicketContentUpdatedEvent(
         }
         
         replyTicketView.Content = replyTicket.Content;
-        ticketingViewService.Update(ticketView);
-        await ticketingViewService.SaveChangesAsync(cancellationToken);
+        ticketingQueryService.Update(ticketView);
+        await ticketingQueryService.SaveChangesAsync(cancellationToken);
     }
 }

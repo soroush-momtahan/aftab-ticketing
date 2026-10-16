@@ -8,7 +8,7 @@ using Aftab.Shared.Domain.Results;
 namespace Aftab.App.Application.Ticketing.Features.Queries.GetTicket;
 
 internal sealed class GetTicketQueryHandler(
-    ITicketingViewService ticketingViewService) : ICommandHandler<GetTicketQuery, GetTicketQuery.Result>
+    ITicketingQueryService ticketingQueryService) : ICommandHandler<GetTicketQuery, GetTicketQuery.Result>
 {
     public async Task<Result<GetTicketQuery.Result>> Handle(
         GetTicketQuery request, CancellationToken cancellationToken)
@@ -19,7 +19,7 @@ internal sealed class GetTicketQueryHandler(
             return Result.Failure<GetTicketQuery.Result>(ticketIdOrError.Error);
         }
         
-        TicketView? ticketView = await ticketingViewService.GetByIdAsync(ticketIdOrError.Value, cancellationToken);
+        TicketView? ticketView = await ticketingQueryService.GetByIdAsync(ticketIdOrError.Value, cancellationToken);
         if (ticketView is null)
         {
             return Result.Failure<GetTicketQuery.Result>(TicketingErrors.NotFound(request.TicketId));
