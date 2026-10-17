@@ -1,3 +1,335 @@
-/* You can add global styles to this file, and also import other style files */
+
 
 @import 'tailwindcss';
+
+/*@import "app/pages/shop/cooperation/cooperation.css";*/
+
+button div {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer base {
+  body {
+    @apply select-none;
+  }
+
+  /* اجازه انتخاب متن در اینپوت‌ها و تکست‌اریاها */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    @apply select-text;
+  }
+}
+
+html, body {
+  /* این ویژگی در گوشی‌های موبایل مانع از رفتار کشسانی و رفرش پیش‌فرض مرورگر می‌شود */
+  overscroll-behavior-y: none;
+}
+
+@theme{
+  /* تعریف خانواده فونت انجمن*/
+  --font-anjoman: 'Anjoman', sans-serif;
+  --font-iran: 'IRANSansFaNum', sans-serif;
+  --font-monoton: 'Monoton', Anjoman;
+  --font-marjor: 'marjor', Anjoman;
+  /* (اختیاری) اگر می‌خواهید انجمن فونت پیش‌فرض کل سایت شود این خط را هم اضافه کنید*/
+  --font-sans: 'Anjoman', 'IRANSansFaNum', ui-sans-serif, system-ui, sans-serif;
+
+  /* تولید کلاس برای وزن‌های اختصاصی که تیلویند به صورت پیش‌فرض ندارد*/
+  --font-weight-ultrabold: 850;
+  --font-weight-heavy: 950;
+  --font-weight-superheavy: 1000;
+
+  --color-porcelain-50: #fcf7e8;
+  --color-porcelain-100: #f9eed2;
+  --color-porcelain-200: #f4dda4;
+  --color-porcelain-300: #eecc77;
+  --color-porcelain-400: #e9bb49;
+  --color-porcelain-500: #e3ab1c;
+  --color-porcelain-600: #b68816;
+  --color-porcelain-700: #886611;
+  --color-porcelain-800: #5b440b;
+  --color-porcelain-900: #2d2206;
+  --color-porcelain-950: #201804;
+
+  --color-pacific-blue-50: #edf6f8;
+  --color-pacific-blue-100: #dbedf0;
+  --color-pacific-blue-200: #b6dbe2;
+  --color-pacific-blue-300: #92c8d3;
+  --color-pacific-blue-400: #6db6c5;
+  --color-pacific-blue-500: #49a4b6;
+  --color-pacific-blue-600: #3a8392;
+  --color-pacific-blue-700: #2c626d;
+  --color-pacific-blue-800: #1d4249;
+  --color-pacific-blue-900: #0f2124;
+  --color-pacific-blue-950: #0a171a;
+
+  --color-reddish-brown-50: #f9efec;
+  --color-reddish-brown-100: #f3ded8;
+  --color-reddish-brown-200: #e6bdb2;
+  --color-reddish-brown-300: #da9c8b;
+  --color-reddish-brown-400: #cd7c65;
+  --color-reddish-brown-500: #c15b3e;
+  --color-reddish-brown-600: #9a4932;
+  --color-reddish-brown-700: #743625;
+  --color-reddish-brown-800: #4d2419;
+  --color-reddish-brown-900: #27120c;
+  --color-reddish-brown-950: #1b0d09;
+
+  --text-2xs: 10px;
+  --text-2xs--line-height: 14px;
+  --breakpoint-xxs: 20rem;
+  --breakpoint-sm: 41.25rem;
+  --breakpoint-xs: 24rem;
+}
+
+@custom-variant hover (&:hover);
+
+@layer components {
+  .form-input {
+    @apply w-full rounded-xl border border-porcelain-300 bg-white/60 p-4
+    focus:border-porcelain-500 focus:outline-none focus:ring-2 focus:ring-porcelain-500/20
+    transition-all duration-300 placeholder-porcelain-600;
+  }
+}
+
+@utility border-1.5{
+  border-width: 1.5px;
+}
+
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Thin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Marjor';
+  src: url('/fonts/marjor/marjor.woff2') format('woff2');
+  font-weight: 400; /* معادل کلاس font-thin*/
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marjor';
+  src: url('/fonts/marjor/marjor.woff2') format('woff2');
+  font-weight: 950; /* معادل کلاس font-thin*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-ExtraLight.woff2') format('woff2');
+  font-weight: 200; /* معادل کلاس font-extralight*/
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansFaNum';
+  src: url('/fonts/iran-sans/IRANSansWeb(FaNum)_UltraLight.woff2') format('woff2');
+  font-weight: 200; /* معادل کلاس font-extralight*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Light.woff2') format('woff2');
+  font-weight: 300; /* معادل کلاس font-light*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANSansFaNum';
+  src: url('/fonts/iran-sans/IRANSansWeb(FaNum)_Light.woff2') format('woff2');
+  font-weight: 300; /* معادل کلاس font-light*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Regular.woff2') format('woff2');
+  font-weight: 400; /* معادل کلاس font-normal*/
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansFaNum';
+  src: url('/fonts/iran-sans/IRANSansWeb(FaNum).woff2') format('woff2');
+  font-weight: 400; /* معادل کلاس font-normal*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic; /* معادل کلاس italic*/
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Medium.woff2') format('woff2');
+  font-weight: 500; /* معادل کلاس font-medium*/
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansFaNum';
+  src: url('/fonts/iran-sans/IRANSansWeb(FaNum)_Medium.woff2') format('woff2');
+  font-weight: 500; /* معادل کلاس font-medium*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-SemiBold.woff2') format('woff2');
+  font-weight: 600; /* معادل کلاس font-semibold*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Bold.woff2') format('woff2');
+  font-weight: 700; /* معادل کلاس font-bold*/
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansFaNum';
+  src: url('/fonts/iran-sans/IRANSansWeb(FaNum)_Bold.woff2') format('woff2');
+  font-weight: 700; /* معادل کلاس font-bold*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-ExtraBold.woff2') format('woff2');
+  font-weight: 800; /* معادل کلاس font-extrabold*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Black.woff2') format('woff2');
+  font-weight: 900; /* معادل کلاس font-black*/
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IRANSansFaNum';
+  src: url('/fonts/iran-sans/IRANSansWeb(FaNum)_Black.woff2') format('woff2');
+  font-weight: 900; /* معادل کلاس font-black*/
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================
+تعریف وزن‌های اختصاصی (بیشتر از ۹۰۰ یا مابین)
+========================================= */
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-UltraBold.woff2') format('woff2');
+  font-weight: 850; /* عدد اختصاصی برای UltraBold*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-Heavy.woff2') format('woff2');
+  font-weight: 950; /* عدد اختصاصی برای Heavy*/
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anjoman';
+  src: url('/fonts/anjoman/Anjoman-FaNum-SuperHeavy.woff2') format('woff2');
+  font-weight: 1000; /* عدد اختصاصی برای SuperHeavy*/
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+@theme {
+  /* Animations */
+  --animate-fade-in-up: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-shake: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-bounce-in: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-progress: progress 5s linear forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  55% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.animate-in.shake { animation: shake 0.4s ease-in-out; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-in-from-bottom-4 {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes zoom-in {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-in { animation-fill-mode: both; }
+.fade-in { animation-name: fade-in; }
+.slide-in-from-bottom-4 { animation-name: slide-in-from-bottom-4; }
+.zoom-in { animation-name: zoom-in; }

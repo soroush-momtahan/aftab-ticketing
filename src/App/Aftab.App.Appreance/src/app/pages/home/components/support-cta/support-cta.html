@@ -1,0 +1,88 @@
+<section
+  class="relative w-full overflow-hidden bg-[#0a0a0a] py-24 md:py-32"
+  aria-labelledby="support-heading"
+>
+  <!-- Subtle industrial grid background -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-[0.04]"
+    style="background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+               linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+               background-size: 64px 64px;"
+  ></div>
+
+  <!-- Soft gold ambient glow -->
+  <div
+    class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+               h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(227,171,28,0.12)_0%,transparent_70%)]
+               blur-3xl"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-4xl px-6 text-center">
+    <!-- Headline -->
+    <h2
+      id="support-heading"
+      class="mb-10 text-4xl font-semibold tracking-tight text-[#fcf7e8]
+                 sm:text-5xl md:text-6xl lg:text-[4.25rem] lg:leading-[1.05]"
+      style="letter-spacing: -0.035em;"
+    >
+      مشکلی پیش اومده!
+    </h2>
+
+    <!-- Subtext (optional, industrial tone) -->
+    <p class="mx-auto mb-14 max-w-xl text-base font-normal leading-relaxed text-[#a3a3a3] md:text-lg">
+      تیم پشتیبانی فنی ما آماده است تا در سریع‌ترین زمان ممکن مشکل شما را حل کند.
+    </p>
+
+    <!-- Primary CTA Button -->
+    <a
+      routerLink="/ticketing"
+      class="group relative inline-flex items-center justify-center gap-3
+                 overflow-hidden rounded-full px-12 py-5
+                 text-lg font-semibold tracking-wide text-[#0a0a0a]
+                 transition-all duration-300 ease-out
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-porcelain-500
+                 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]
+                 active:scale-[0.97]"
+      [class.scale-105]="isHovered()"
+      (mouseenter)="isHovered.set(true)"
+      (mouseleave)="isHovered.set(false)"
+      (mousedown)="isPressed.set(true)"
+      (mouseup)="isPressed.set(false)"
+    >
+      <!-- Metallic gold gradient background -->
+      <span
+        class="absolute inset-0 rounded-full
+                   bg-gradient-to-b from-[#f4dda4] via-[#e3ab1c] to-[#b68816]
+                   transition-all duration-300
+                   group-hover:from-[#f9eed2] group-hover:via-[#e9bb49] group-hover:to-[#e3ab1c]"
+      ></span>
+
+      <!-- Subtle inner highlight (glass edge) -->
+      <span
+        class="absolute inset-[1px] rounded-full
+                   bg-gradient-to-b from-white/25 to-transparent opacity-60"
+      ></span>
+
+      <!-- Soft glow on hover -->
+      <span
+        class="absolute -inset-1 rounded-full bg-[#e3ab1c]/30 blur-xl
+                   opacity-0 transition-opacity duration-500
+                   group-hover:opacity-100"
+      ></span>
+
+      <!-- Button content -->
+      <span class="relative z-10 flex items-center gap-3">
+            ثبت تیکت جدید
+        <svg
+          class="h-5 w-5 rotate-180 transition-transform duration-300 group-hover:translate-x-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+    </a>
+  </div>
+</section>

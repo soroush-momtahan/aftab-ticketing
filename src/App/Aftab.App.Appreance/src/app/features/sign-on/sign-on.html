@@ -1,0 +1,307 @@
+<div class="min-h-screen bg-[#0a0a0a] text-white flex flex-col lg:flex-row overflow-hidden">
+  <!-- ═══════════════ RIGHT: Sign-On Form ═══════════════ -->
+  <main class="flex-1 flex items-center justify-center p-6 sm:p-10 lg:p-16 relative">
+    <!-- subtle ambient glow -->
+    <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-porcelain-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="w-full max-w-md relative z-10">
+
+      <!-- ───── STEP: MOBILE ───── -->
+      @if (store.step() === 'PHONE') {
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight mb-2">ورود / ثبت‌نام</h2>
+          <p class="text-white/50 mb-10 text-sm">شماره موبایل خود را وارد کنید</p>
+          <div class="space-y-6">
+            <div class="relative">
+              <label class="block text-xs tracking-widest uppercase text-white/40 mb-2">شماره موبایل</label>
+              <div class="relative group pb-5">
+<!--                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm" dir="ltr">+98</span>-->
+                <input
+                  type="tel"
+                  inputmode="numeric"
+                  [formField]="signOnForm.phone"
+                  (keydown)="onPhoneKeyDown($event)"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-8 pr-4 text-lg tracking-wider placeholder:text-white/20 focus:outline-none focus:border-porcelain-500/60 focus:ring-2 focus:ring-porcelain-500/20 transition-all duration-300"
+                  placeholder="09171234567"
+                  dir="ltr"
+                  [class.!border-red-500]="(store.status() === 'error' || signOnForm.phone().touched()) && signOnForm.phone().invalid()"
+                />
+                <!-- رندر کردن پیغام خطا -->
+                @if ((store.status() === 'error' || signOnForm.phone().touched()) && signOnForm.phone().invalid()) {
+                  <div class="absolute -bottom-0 right-2 text-red-500 text-xs font-bold animate-slide-in-right flex items-center gap-1">
+                    <svg class="size-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    {{ signOnForm.phone().errors()[0].message }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button
+              #verifyPhoneBtn
+              (click)="onCheckPhone()"
+              [disabled]="signOnForm.phone().invalid() || store.status() === 'loading'"
+              class="w-full relative overflow-hidden rounded-2xl py-4 font-medium tracking-wide transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-porcelain-600 to-porcelain-500 opacity-90 group-hover:opacity-100 transition-opacity"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <span class="relative z-10 flex items-center justify-center gap-2">
+                    @if (store.status() === 'loading') {
+                      در حال بررسی شماره موبایل ...<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    } @else {
+                      ادامه
+                    }
+                  </span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ───── STEP: VERIFY METHOD (existing user) ───── -->
+      @if (store.step() === 'METHOD_SELECT') {
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 class="text-3xl font-semibold tracking-tight mb-2">روش ورود</h2>
+          <p class="text-white/50 mb-10 text-sm">{{ store.phone() }}</p>
+
+          <div class="space-y-4">
+            <button
+              (click)="onVerifyMethod('password')"
+              class="w-full flex items-center gap-4 p-5 rounded-2xl border border-white/10 bg-white/5 hover:border-porcelain-500/40 hover:bg-white/8 transition-all duration-300 text-right"
+            >
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-porcelain-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+              <div class="flex-1">
+                <div class="font-medium">ورود با رمز عبور</div>
+                <div class="text-xs text-white/40 mt-0.5">اگر رمز عبور دارید</div>
+              </div>
+            </button>
+
+            <button
+              (click)="onVerifyMethod('otp')"
+              class="w-full flex items-center gap-4 p-5 rounded-2xl border border-white/10 bg-white/5 hover:border-porcelain-500/40 hover:bg-white/8 transition-all duration-300 text-right"
+            >
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-porcelain-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              </div>
+              <div class="flex-1">
+                <div class="font-medium">ورود با کد پیامکی</div>
+                <div class="text-xs text-white/40 mt-0.5">کد ۶ رقمی به موبایل شما ارسال می‌شود</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ───── STEP: OTP ───── -->
+      @if (store.step() === 'OTP') {
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 class="text-3xl font-semibold tracking-tight mb-2">کد تأیید</h2>
+          <p class="text-white/50 mb-10 text-sm">
+            کد ۶ رقمی به <span class="text-porcelain-400" dir="ltr">{{ store.phone() }}</span> ارسال شد
+          </p>
+          <!-- 6 OTP boxes – LTR, auto-focus, advance / backspace -->
+          <div class="flex justify-center gap-3 mb-8" dir="ltr">
+            @for (digit of ['', '', '', '', '', '']; track $index; let i = $index) {
+              <input
+                #otpInput
+                type="text"
+                autocomplete="one-time-code"
+                inputmode="numeric"
+                maxlength="1"
+                [value]="digit"
+                (input)="onOtpInput($event, i)"
+                (keydown)="onOtpKeydown($event, i)"
+                (paste)="onOtpPaste($event)"
+                class="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-semibold rounded-xl border bg-white/5 transition-all duration-300 focus:outline-none"
+                [class]="otpBoxClass(i)"
+                dir="ltr"
+              />
+            }
+          </div>
+
+          <!-- Success / Error feedback -->
+          @if (store.status() === 'success') {
+            <div class="flex items-center justify-center gap-2 text-emerald-400 mb-6 animate-in zoom-in duration-300">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="font-medium">کد صحیح است</span>
+            </div>
+          }
+          @if (store.status() === 'error') {
+            <div class="flex items-center justify-center gap-2 text-red-400 mb-6 animate-in shake duration-300">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="font-medium">کد نادرست است</span>
+            </div>
+          }
+
+<!--          <div class="text-center text-sm text-white/40">-->
+<!--            @if (store.state().resendSeconds > 0) {-->
+<!--              ارسال مجدد تا {{ store.state().resendSeconds }} ثانیه-->
+<!--            } @else {-->
+<!--              <button (click)="resendOtp()" class="text-porcelain-400 hover:text-porcelain-300 transition-colors">-->
+<!--                ارسال مجدد کد-->
+<!--              </button>-->
+<!--            }-->
+<!--          </div>-->
+        </div>
+      }
+
+      <!-- ───── STEP: PASSWORD (new user) ───── -->
+      @if (store.step() === 'SET_PASSWORD') {
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 class="text-3xl font-semibold tracking-tight mb-2">تعیین رمز عبور</h2>
+          <p class="text-white/50 mb-10 text-sm">رمز عبور امنی انتخاب کنید</p>
+
+          <div class="space-y-5">
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-white/40 mb-2">رمز عبور</label>
+              <div class="relative group pb-5">
+                <input
+                  type="password"
+                  [formField]="signOnForm.password"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-lg focus:outline-none focus:border-porcelain-500/60 focus:ring-2 focus:ring-porcelain-500/20 transition-all"
+                  placeholder="••••••••"
+                  dir="ltr"
+                  [class.!border-red-500]="(store.status() === 'error' || signOnForm.password().touched()) && signOnForm.password().invalid()"
+                />
+                <!-- رندر کردن پیغام خطا -->
+                @if ((store.status() === 'error' || signOnForm.password().touched()) && signOnForm.password().invalid()) {
+                  <div class="absolute -bottom-0 right-2 text-red-500 text-xs font-bold animate-slide-in-right flex items-center gap-1">
+                    <svg class="size-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    {{ signOnForm.password().errors()[0].message }}
+                  </div>
+                }
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-white/40 mb-2">تکرار رمز عبور</label>
+              <div class="relative group pb-5">
+                <input
+                  type="password"
+                  [formField]="signOnForm.confirmPassword"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-lg focus:outline-none focus:border-porcelain-500/60 focus:ring-2 focus:ring-porcelain-500/20 transition-all"
+                  placeholder="••••••••"
+                  dir="ltr"
+                  [class.!border-red-500]="(store.status() === 'error' || signOnForm.confirmPassword().touched()) && signOnForm.confirmPassword().invalid()"
+                />
+                <!-- رندر کردن پیغام خطا -->
+                @if ((store.status() === 'error' || signOnForm.confirmPassword().touched()) && signOnForm.confirmPassword().invalid()) {
+                  <div class="absolute -bottom-0 right-2 text-red-500 text-xs font-bold animate-slide-in-right flex items-center gap-1">
+                    <svg class="size-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    {{ signOnForm.confirmPassword().errors()[0].message }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button
+              (click)="onSetPassword()"
+              [disabled]="store.status() === 'loading'"
+              class="w-full relative overflow-hidden rounded-2xl py-4 font-medium tracking-wide transition-all duration-300 disabled:opacity-40 group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-porcelain-600 to-porcelain-500"></div>
+              <span class="relative z-10">ادامه</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ───── STEP: PASSWORD (exist user) ───── -->
+      @if (store.step() === 'PASSWORD_LOGIN') {
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 class="text-3xl font-semibold tracking-tight mb-2">ورود با رمز عبور</h2>
+          <p class="text-white/50 mb-10 text-sm">لطفا رمز عبور خود را وارد کنید</p>
+
+          <div class="space-y-5">
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-white/40 mb-2">رمز عبور</label>
+              <input
+                type="password"
+                [formField]="signOnForm.password"
+                class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-lg focus:outline-none focus:border-porcelain-500/60 focus:ring-2 focus:ring-porcelain-500/20 transition-all"
+                placeholder="••••••••"
+                dir="ltr"
+                [class.!border-red-500]="(store.status() === 'error' || signOnForm.password().touched()) && signOnForm.password().invalid()"
+              />
+            </div>
+            <button
+              (click)="onSignIn()"
+              [disabled]="store.status() === 'loading' || signOnForm.password().invalid()"
+              class="w-full relative overflow-hidden rounded-2xl py-4 font-medium tracking-wide transition-all duration-300 disabled:opacity-40 group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-porcelain-600 to-porcelain-500"></div>
+              <span class="relative z-10">ورود</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ───── STEP: PROFILE ───── -->
+      @if (store.step() === 'SET_NAME') {
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 class="text-3xl font-semibold tracking-tight mb-2">اطلاعات شخصی</h2>
+          <p class="text-white/50 mb-10 text-sm">نام و نام خانوادگی خود را وارد کنید</p>
+
+          <div class="space-y-5">
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-white/40 mb-2">نام</label>
+              <div class="relative group pb-5">
+                <input
+                  type="text"
+                  [formField]="signOnForm.firstName"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-lg focus:outline-none focus:border-porcelain-500/60 focus:ring-2 focus:ring-porcelain-500/20 transition-all"
+                  [class.!border-red-500]="(store.status() === 'error' || signOnForm.firstName().touched()) && signOnForm.firstName().invalid()"
+                />
+                <!-- رندر کردن پیغام خطا -->
+                @if ((store.status() === 'error' || signOnForm.firstName().touched()) && signOnForm.firstName().invalid()) {
+                  <div class="absolute -bottom-0 right-2 text-red-500 text-xs font-bold animate-slide-in-right flex items-center gap-1">
+                    <svg class="size-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    {{ signOnForm.firstName().errors()[0].message }}
+                  </div>
+                }
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs tracking-widest uppercase text-white/40 mb-2">نام خانوادگی</label>
+              <div class="relative group pb-5">
+                <input
+                  type="text"
+                  [formField]="signOnForm.lastName"
+                  class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-lg focus:outline-none focus:border-porcelain-500/60 focus:ring-2 focus:ring-porcelain-500/20 transition-all"
+                  [class.!border-red-500]="(store.status() === 'error' || signOnForm.lastName().touched()) && signOnForm.lastName().invalid()"
+                />
+                <!-- رندر کردن پیغام خطا -->
+                @if ((store.status() === 'error' || signOnForm.lastName().touched()) && signOnForm.lastName().invalid()) {
+                  <div class="absolute -bottom-0 right-2 text-red-500 text-xs font-bold animate-slide-in-right flex items-center gap-1">
+                    <svg class="size-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    {{ signOnForm.lastName().errors()[0].message }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button
+              (click)="onSignUp()"
+              [disabled]="store.status() === 'loading'"
+              class="w-full relative overflow-hidden rounded-2xl py-4 font-medium tracking-wide transition-all duration-300 disabled:opacity-40 group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-porcelain-600 to-porcelain-500"></div>
+              <span class="relative z-10">تکمیل ثبت‌نام</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ───── SUCCESS ───── -->
+      @if (store.step() === 'SUCCESS') {
+        <div class="text-center animate-in zoom-in duration-500">
+          <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+            <svg class="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <h2 class="text-3xl font-semibold tracking-tight mb-2">خوش آمدید</h2>
+          <p class="text-white/50">حساب شما با موفقیت ایجاد / وارد شد</p>
+        </div>
+      }
+
+    </div>
+  </main>
+</div>
