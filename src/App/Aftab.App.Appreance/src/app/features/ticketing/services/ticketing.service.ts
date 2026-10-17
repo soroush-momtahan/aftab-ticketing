@@ -4,11 +4,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-interface AddTicketRequest {
+export interface AddTicketRequest {
   title: string;
   content: string;
-  department: TicketDepartment;
-  priority: TicketPriority;
+  department: TicketDepartment | null;
+  priority: TicketPriority | null;
 }
 
 @Injectable({ providedIn: 'root' })
