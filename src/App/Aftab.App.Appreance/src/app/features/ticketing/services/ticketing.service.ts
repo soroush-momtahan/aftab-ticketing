@@ -12,7 +12,7 @@ export interface AddTicketRequest {
   priority: TicketPriority | null;
 }
 
-interface GetTicketsRequest {
+export interface GetTicketsRequest {
   searchString: string,
   sortByPriority: boolean,
   filterByDepartment?: TicketDepartment | null,
@@ -57,7 +57,9 @@ export class TicketingService {
     return this.http.get<GetTicketResponse>(`${this.baseUrl}/tickets/${ticketId}`);
   }
   getTickets(req: GetTicketsRequest): Observable<GetTicketResponse[]>{
-    return this.http.get<GetTicketResponse[]>(`${this.baseUrl}/tickets`);
+    return this.http.get<GetTicketResponse[]>(
+      `${this.baseUrl}/tickets?SearchString=${req.searchString}&SortByPriority=${req.sortByPriority?? false}&FilterByDepartment=${req.filterByDepartment}&FilterByStatus=${req.filterByStatus}&FilterByPersonId=${req.filterByPersonId}&PageIndex=${req.pageIndex}&PageSize=${req.pageSize}`,
+    );
   }
   addReply(ticketId: string, content: string): Observable<void>{
     return this.http.post<void>(`${this.baseUrl}/tickets/${ticketId}/reply`, content);

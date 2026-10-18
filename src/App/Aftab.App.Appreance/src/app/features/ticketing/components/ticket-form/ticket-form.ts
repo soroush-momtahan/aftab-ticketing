@@ -1,11 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { TicketDepartment } from '../../enums/ticket-department.enum';
 import { TicketPriority } from '../../enums/ticket-priority.enum';
 import { TicketingStore } from '../../store/ticketing.store';
 import { AddTicketRequest } from '../../services/ticketing.service';
+import { mapToRequest, TicketFormStore } from './store/ticket-form.store';
 
-interface TicketInputModel {
+export interface TicketFormInputModel {
   description: string;
   department: TicketDepartment | null;
   priority: TicketPriority | null;
@@ -15,22 +16,21 @@ interface TicketInputModel {
 @Component({
   imports: [FormField],
   selector: 'app-ticketing',
-  providers: [TicketingStore],
+  providers: [TicketFormStore, TicketingStore],
   styleUrl: './ticket-form.css',
   templateUrl: './ticket-form.html',
 })
 export class TicketForm {
+  readonly store = inject(TicketFormStore);
 
-  readonly store = inject(TicketingStore);
-
-  ticketInputModel = signal<TicketInputModel>({
+  ticketFormInputModel = signal<TicketFormInputModel>({
     description: '',
     department: null,
     priority: null,
     title: '',
   });
 
-  form = form(this.ticketInputModel, (form) => {
+  form = form(this.ticketFormInputModel, (form) => {
     // description
     required(form.description, { message: 'وارد کردن توضیحات الزامی است' });
     minLength(form.description, 6, { message: 'توضیحات وارد شده خیلی کوتاه هست' });
@@ -81,8 +81,6 @@ export class TicketForm {
     { id: TicketPriority.High as TicketPriority, label: 'زیاد', short: 'H', desc: 'فوری' },
   ];
 
-  readonly progressPercent = computed(() => ((this.store.currentStep() - 1) / 4) * 100);
-
   canProceed = computed(() => {
     switch (this.store.currentStep()) {
       case 1:
@@ -100,12 +98,22 @@ export class TicketForm {
     }
   });
 
+  // استفاده از Effect برای واکنش به موفقیت سابمیت (مثلا ریدایرکت یا بستن مدال)
+  constructor() {
+    effect(() => {
+      if (this.store.isSuccess()) {
+        // اینجا می‌توانی یک Toast نشان دهی، کاربر را ریدایرکت کنی
+        // یا فرم را به حالت اولیه برگردانی
+      }
+    });
+  }
+
   onSelectDepartment(ticketDepartment: TicketDepartment) {
-    this.ticketInputModel.update((form) => ({ ...form, department: ticketDepartment }));
+    this.ticketFormInputModel.update((form) => ({ ...form, department: ticketDepartment }));
   }
 
   onSelectPriority(id: TicketPriority) {
-    this.ticketInputModel.update((form) => ({ ...form, priority: id }));
+    this.ticketFormInputModel.update((form) => ({ ...form, priority: id }));
   }
 
   onNextStep() {
@@ -119,15 +127,9 @@ export class TicketForm {
 
   onSubmit(event?: Event) {
     if (event) event.preventDefault();
-
     if (!this.canProceed()) return;
-    const request: AddTicketRequest = {
-      content: this.form.description().value(),
-      department: this.form.department().value(),
-      priority: this.form.priority().value(),
-      title: this.form.title().value(),
-    };
-    this.store.addTicket(request);
+    const payload = mapToRequest(this.ticketFormInputModel());
+    this.store.submitTicket(payload);
   }
 
   protected readonly TicketDepartment = TicketDepartment;
