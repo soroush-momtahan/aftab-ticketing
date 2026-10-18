@@ -1,0 +1,123 @@
+<!-- toast-container.html -->
+<div
+  class="fixed z-[9999] flex flex-col gap-3.5 pointer-events-none
+         bottom-6 right-6 left-6 sm:left-auto sm:w-[400px]"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      animate.enter="toast-enter"
+      animate.leave="toast-leave"
+      class="pointer-events-auto group relative overflow-hidden
+             rounded-2xl border border-white/[0.08]
+             bg-[#0a0a0a]/90 backdrop-blur-2xl
+             shadow-[0_12px_40px_-8px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.03),inset_0_1px_0_0_rgba(255,255,255,0.04)]
+             ring-1 ring-white/[0.04]
+             transition-all duration-300 ease-out
+             hover:border-porcelain-500/35
+             hover:shadow-[0_16px_48px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(227,171,28,0.12),inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+      (mouseenter)="onEnter(toast)"
+      (mouseleave)="onLeave(toast)"
+    >
+      <!-- Precision progress bar -->
+      @if (toast.duration > 0) {
+        <div
+          class="absolute bottom-0 left-0 h-[2.5px] origin-left
+                 bg-gradient-to-r from-porcelain-300 via-porcelain-500 to-porcelain-600
+                 shadow-[0_0_16px_rgba(227,171,28,0.55),0_0_4px_rgba(227,171,28,0.8)]
+                 toast-progress"
+          [style.animation-duration.ms]="toast.duration"
+          [class.paused]="toast.paused"
+        ></div>
+      }
+
+      <div class="flex items-start gap-4 p-5">
+        <!-- Engineered icon badge -->
+        <div
+          class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center
+                 rounded-xl border
+                 bg-gradient-to-br from-white/[0.07] to-transparent
+                 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]"
+          [class]="iconBgClass(toast.type)"
+        >
+          @switch (toast.type) {
+            @case ('success') {
+              <svg class="h-5 w-5 text-porcelain-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+            }
+            @case ('error') {
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            }
+            @case ('warning') {
+              <svg class="h-5 w-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            }
+            @case ('info') {
+              <svg class="h-5 w-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            }
+            @case ('loading') {
+              <svg class="h-5 w-5 text-porcelain-400 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"/>
+                <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            }
+          }
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1 min-w-0 pt-0.5">
+          @if (toast.title) {
+            <p class="text-[13.5px] font-semibold tracking-[-0.01em] text-white/95 leading-none mb-1.5">
+              {{ toast.title }}
+            </p>
+          }
+          <p class="text-[13px] leading-relaxed text-white/65 tracking-[-0.005em]">
+            {{ toast.message }}
+          </p>
+
+          @if (toast.action) {
+            <button
+              type="button"
+              class="mt-3 inline-flex items-center gap-1.5
+                     text-[12.5px] font-medium tracking-wide
+                     text-porcelain-400 hover:text-porcelain-300
+                     transition-colors duration-200
+                     focus:outline-none focus-visible:ring-1 focus-visible:ring-porcelain-500/50 focus-visible:ring-offset-1 focus-visible:ring-offset-[#0a0a0a]"
+              (click)="toast.action!.onClick(); toastService.dismiss(toast.id)"
+            >
+              {{ toast.action.label }}
+              <svg class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 12l4-4-4-4"/>
+              </svg>
+            </button>
+          }
+        </div>
+
+        <!-- Precision dismiss -->
+        @if (toast.dismissible) {
+          <button
+            type="button"
+            class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center
+                   rounded-lg text-white/35
+                   hover:text-white/85 hover:bg-white/[0.06]
+                   transition-all duration-200
+                   focus:outline-none focus-visible:ring-1 focus-visible:ring-porcelain-500/50"
+            (click)="toastService.dismiss(toast.id)"
+            aria-label="Dismiss"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+              <path d="M4 4l8 8M12 4l-8 8"/>
+            </svg>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</div>

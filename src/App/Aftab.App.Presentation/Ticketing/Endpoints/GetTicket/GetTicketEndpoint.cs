@@ -16,7 +16,7 @@ internal sealed class GetTicketEndpoint : IEndpoint
     public sealed record GetTicketRequest
     {
         public sealed record Response(
-            TicketDto TicketDto,
+            TicketDto Ticket,
             List<ReplyTicketDto> Replies);
 
         public sealed record ReplyTicketDto(

@@ -13,7 +13,7 @@ internal sealed class UpdateReplyTicketContentEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("/api/tickets/{ticketId}/ReplyTickets/{replyTicketId}/content", async (
+        app.MapPatch("/api/tickets/{ticketId}/replies/{replyTicketId}/content", async (
             string ticketId,
             string replyTicketId,
             string newContent,

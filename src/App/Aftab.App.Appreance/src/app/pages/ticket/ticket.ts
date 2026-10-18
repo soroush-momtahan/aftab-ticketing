@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Ticketing } from '../../features/ticketing/ticketing';
+import { TicketForm } from '../../features/ticketing/components/ticket-form/ticket-form';
 
 @Component({
-  imports: [Ticketing],
+  imports: [TicketForm],
   selector: 'app-ticket',
   styleUrl: './ticket.css',
   templateUrl: './ticket.html',

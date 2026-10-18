@@ -286,7 +286,8 @@ export const AuthStore = signalStore(
                 next: (res) => {
                   tokenService.setToken(res.token);
                   patchState(store, { status: 'success', step: 'SUCCESS' });
-                  console.log(res);
+                  const returnUrl = route.snapshot.queryParams['returnUrl'] || '/';
+                  router.navigateByUrl(returnUrl);
                 },
                 error: (err: HttpErrorResponse) => {
                   patchState(store, {

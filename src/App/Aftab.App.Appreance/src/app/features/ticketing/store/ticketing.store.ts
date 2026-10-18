@@ -5,57 +5,49 @@ import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { exhaustMap, pipe, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { HttpErrorResponse } from '@angular/common/http';
+import {
+  setFulfilled,
+  setPending,
+  setRejected,
+  withRequestStatus,
+} from '../../../core/store/features/request-status.festure';
 
-export type Status = 'idle' | 'loading' | 'success' | 'error'
 interface TicketingState {
-  currentStep: number;
-  status: Status;
-  error: ProblemDetails | null
+  currentStep: number,
 }
 
 const initialState: TicketingState = {
   currentStep: 1,
-  status: 'idle' as Status,
-  error: null,
 }
 
 export const TicketingStore = signalStore(
   withState(initialState),
+  withRequestStatus(),
   withMethods((store, ticketingService = inject(TicketingService)) => ({
     nextStep() {
       patchState(store, (state) => ({
         currentStep: state.currentStep < 5 ? state.currentStep + 1 : state.currentStep,
-        status: 'idle' as Status,
-        error: null,
       }));
     },
 
     prevStep() {
       patchState(store, (state) => ({
         currentStep: state.currentStep > 1 ? state.currentStep - 1 : state.currentStep,
-        status: 'idle' as Status,
-        error: null,
       }));
     },
     addTicket: rxMethod<AddTicketRequest>(
       pipe(
-        tap(() => patchState(store, { status: 'loading' })),
+        tap(() => patchState(store, setPending())),
         exhaustMap((req) =>
           ticketingService.AddTicket(req).pipe(
             tapResponse({
               next: () => {
                 patchState(store, {
                   currentStep: 5,
-                  status: 'success',
-                });
+                }, setFulfilled());
               },
-              error: (err: HttpErrorResponse) => {
-                patchState(store, {
-                  status: 'error',
-                  error: err.error as ProblemDetails,
-                });
-                console.log(err);
+              error: (err: ProblemDetails) => {
+                patchState(store, setRejected(err));
               },
             }),
           ),

@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
-import { TicketDepartment } from './enums/ticket-department.enum';
-import { TicketPriority } from './enums/ticket-priority.enum';
-import { TicketingStore } from './store/ticketing.store';
-import { AddTicketRequest } from './services/ticketing.service';
+import { TicketDepartment } from '../../enums/ticket-department.enum';
+import { TicketPriority } from '../../enums/ticket-priority.enum';
+import { TicketingStore } from '../../store/ticketing.store';
+import { AddTicketRequest } from '../../services/ticketing.service';
 
 interface TicketInputModel {
   description: string;
@@ -16,10 +16,10 @@ interface TicketInputModel {
   imports: [FormField],
   selector: 'app-ticketing',
   providers: [TicketingStore],
-  styleUrl: './ticketing.css',
-  templateUrl: './ticketing.html',
+  styleUrl: './ticket-form.css',
+  templateUrl: './ticket-form.html',
 })
-export class Ticketing {
+export class TicketForm {
 
   readonly store = inject(TicketingStore);
 

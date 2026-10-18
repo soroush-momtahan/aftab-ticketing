@@ -1,0 +1,273 @@
+<section class="relative min-h-screen bg-[#0a0a0a] text-[#fcf7e8] overflow-hidden">
+  <!-- Industrial grid -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-[0.035]"
+    style="background-image: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
+               linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+               background-size: 56px 56px;"
+  ></div>
+
+  <!-- Ambient gold glow -->
+  <div
+    class="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2
+               h-[360px] w-[640px] rounded-full
+               bg-[radial-gradient(ellipse,rgba(227,171,28,0.07)_0%,transparent_70%)]
+               blur-3xl"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-5xl px-5 py-10 md:px-8 md:py-14">
+    <!-- Header -->
+    <div class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1
+          class="text-3xl font-semibold tracking-tight text-[#fcf7e8] sm:text-4xl"
+          style="letter-spacing: -0.03em;"
+        >
+          تیکت‌های من
+        </h1>
+        <p class="mt-2 text-sm text-[#a3a3a3]">
+          {{ totalCount() }} تیکت یافت شد
+        </p>
+      </div>
+
+      <a
+        routerLink="/ticketing/new"
+        class="group relative inline-flex items-center gap-2 overflow-hidden rounded-full
+                   px-6 py-2.5 text-sm font-semibold tracking-wide text-[#0a0a0a]
+                   transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+      >
+            <span
+              class="absolute inset-0 rounded-full
+                     bg-gradient-to-b from-[#f4dda4] via-[#e3ab1c] to-[#b68816]
+                     transition-all duration-300
+                     group-hover:from-[#f9eed2] group-hover:via-[#e9bb49] group-hover:to-[#e3ab1c]"
+            ></span>
+        <span class="absolute inset-[1px] rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-50"></span>
+        <span class="relative z-10 flex items-center gap-2">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              تیکت جدید
+            </span>
+      </a>
+    </div>
+
+    <!-- ========== SEARCH + FILTERS ========== -->
+    <div
+      class="mb-8 rounded-2xl border border-[#2a2a2a] bg-[#111]/80 p-5
+                 backdrop-blur-sm shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)]"
+    >
+      <!-- Search -->
+      <div class="relative mb-5">
+        <svg
+          class="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#666]"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        <input
+          type="text"
+          [ngModel]="searchString()"
+          (ngModelChange)="onSearch($event)"
+          placeholder="جستجو در عنوان یا شماره تیکت..."
+          class="w-full rounded-xl border border-[#2a2a2a] bg-[#0a0a0a]
+                     py-3 pr-12 pl-4 text-sm text-[#fcf7e8] placeholder:text-[#555]
+                     transition-all duration-300
+                     focus:border-[#e3ab1c]/50 focus:outline-none focus:ring-2 focus:ring-[#e3ab1c]/15"
+        />
+      </div>
+
+      <!-- Filters row -->
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <!-- Department -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium uppercase tracking-wider text-[#666]">دپارتمان</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              type="button"
+              (click)="setDepartment(null)"
+              class="rounded-full border px-3 py-1 text-xs font-medium transition-all"
+              [class]="!filterDepartment() ? 'border-[#e3ab1c] bg-[#e3ab1c]/15 text-[#e3ab1c]' : 'border-[#2a2a2a] text-[#a3a3a3] hover:border-[#3a3a3a]'"
+            >
+              همه
+            </button>
+            @for (d of departments; track d.value) {
+              <button
+                type="button"
+                (click)="setDepartment(d.value)"
+                class="rounded-full border px-3 py-1 text-xs font-medium transition-all"
+                [class]="filterDepartment() === d.value ? 'border-[#e3ab1c] bg-[#e3ab1c]/15 text-[#e3ab1c]' : 'border-[#2a2a2a] text-[#a3a3a3] hover:border-[#3a3a3a]'"
+              >
+                {{ d.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium uppercase tracking-wider text-[#666]">وضعیت</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              type="button"
+              (click)="setStatus(null)"
+              class="rounded-full border px-3 py-1 text-xs font-medium transition-all"
+              [class]="!filterStatus() ? 'border-[#e3ab1c] bg-[#e3ab1c]/15 text-[#e3ab1c]' : 'border-[#2a2a2a] text-[#a3a3a3] hover:border-[#3a3a3a]'"
+            >
+              همه
+            </button>
+            @for (s of statuses; track s.value) {
+              <button
+                type="button"
+                (click)="setStatus(s.value)"
+                class="rounded-full border px-3 py-1 text-xs font-medium transition-all"
+                [class]="filterStatus() === s.value ? 'border-[#e3ab1c] bg-[#e3ab1c]/15 text-[#e3ab1c]' : 'border-[#2a2a2a] text-[#a3a3a3] hover:border-[#3a3a3a]'"
+              >
+                {{ s.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Sort by Priority -->
+        <button
+          type="button"
+          (click)="toggleSortByPriority()"
+          class="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium transition-all"
+          [class]="sortByPriority() ? 'border-[#e3ab1c] bg-[#e3ab1c]/15 text-[#e3ab1c]' : 'border-[#2a2a2a] text-[#a3a3a3] hover:border-[#3a3a3a]'"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+          </svg>
+          مرتب‌سازی بر اساس اولویت
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== TICKET LIST ========== -->
+    <div class="space-y-3">
+      @if (isLoading()) {
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="h-24 animate-pulse rounded-2xl border border-[#2a2a2a] bg-[#111]"></div>
+        }
+      } @else if (paginatedTickets().length === 0) {
+        <div class="rounded-2xl border border-dashed border-[#2a2a2a] bg-[#111]/50 py-20 text-center">
+          <p class="text-sm text-[#666]">هیچ تیکتی با این فیلترها یافت نشد.</p>
+        </div>
+      } @else {
+        @for (ticket of paginatedTickets(); track ticket.id; let i = $index) {
+          <a
+            [routerLink]="['/ticketing', ticket.id]"
+            class="group block rounded-2xl border border-[#2a2a2a] bg-[#111] p-5
+                       transition-all duration-300
+                       hover:border-[#3a3a3a] hover:bg-[#141414]
+                       hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.6)]"
+            [style.animation-delay.ms]="i * 40"
+            style="animation: fadeSlideIn 0.4s ease-out both;"
+          >
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <!-- Left: Title + Meta -->
+              <div class="min-w-0 flex-1">
+                <div class="mb-2 flex flex-wrap items-center gap-2">
+                  <span class="text-xs font-medium tabular-nums text-[#666]">#{{ ticket.id }}</span>
+                  <span class="h-1 w-1 rounded-full bg-[#3a3a3a]"></span>
+                  <span class="text-xs text-[#666]">{{ ticket.createdAt }}</span>
+                </div>
+
+                <h3
+                  class="mb-2 text-base font-semibold tracking-tight text-[#fcf7e8]
+                             transition-colors group-hover:text-[#e3ab1c] sm:text-lg"
+                  style="letter-spacing: -0.02em;"
+                >
+                  {{ ticket.title }}
+                </h3>
+
+                <div class="flex flex-wrap items-center gap-3 text-xs text-[#888]">
+                  <span>{{ ticket.customerName }}</span>
+                  <span class="h-1 w-1 rounded-full bg-[#3a3a3a]"></span>
+                  <span>{{ departmentLabel(ticket.department) }}</span>
+                  <span class="h-1 w-1 rounded-full bg-[#3a3a3a]"></span>
+                  <span>{{ ticket.repliesCount }} پاسخ</span>
+                </div>
+              </div>
+
+              <!-- Right: Badges -->
+              <div class="flex flex-shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-end">
+                <!-- Status -->
+                <span
+                  class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide"
+                  [class]="statusBadgeClass(ticket.status)"
+                >
+                      <span class="h-1.5 w-1.5 rounded-full" [class]="statusDotClass(ticket.status)"></span>
+                  {{ statusLabel(ticket.status) }}
+                    </span>
+
+                <!-- Priority -->
+                <span
+                  class="rounded-full border px-3 py-1 text-[11px] font-medium"
+                  [class]="priorityBadgeClass(ticket.priority)"
+                >
+                      اولویت {{ priorityLabel(ticket.priority) }}
+                    </span>
+              </div>
+            </div>
+          </a>
+        }
+      }
+    </div>
+
+    <!-- ========== PAGINATION ========== -->
+    @if (totalPages() > 1) {
+      <div class="mt-10 flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <p class="text-xs text-[#666]">
+          نمایش {{ startItem() }} تا {{ endItem() }} از {{ totalCount() }}
+        </p>
+
+        <div class="flex items-center gap-1.5">
+          <button
+            type="button"
+            (click)="goToPage(pageIndex() - 1)"
+            [disabled]="pageIndex() === 1"
+            class="flex h-9 w-9 items-center justify-center rounded-full border border-[#2a2a2a]
+                       text-[#a3a3a3] transition-all
+                       enabled:hover:border-[#3a3a3a] enabled:hover:text-[#e5e5e5]
+                       disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          @for (p of visiblePages(); track p) {
+            <button
+              type="button"
+              (click)="goToPage(p)"
+              class="flex h-9 w-9 items-center justify-center rounded-full text-xs font-medium transition-all"
+              [class]="
+                    pageIndex() === p
+                      ? 'bg-[#e3ab1c] text-[#0a0a0a]'
+                      : 'border border-[#2a2a2a] text-[#a3a3a3] hover:border-[#3a3a3a] hover:text-[#e5e5e5]'
+                  "
+            >
+              {{ p }}
+            </button>
+          }
+
+          <button
+            type="button"
+            (click)="goToPage(pageIndex() + 1)"
+            [disabled]="pageIndex() === totalPages()"
+            class="flex h-9 w-9 items-center justify-center rounded-full border border-[#2a2a2a]
+                       text-[#a3a3a3] transition-all
+                       enabled:hover:border-[#3a3a3a] enabled:hover:text-[#e5e5e5]
+                       disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</section>
