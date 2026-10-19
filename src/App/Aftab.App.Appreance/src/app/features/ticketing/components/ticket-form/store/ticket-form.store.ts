@@ -45,10 +45,6 @@ export const TicketFormStore = signalStore(
       if (store.currentStep() !== store.maxSteps() - 1) return;
       patchState(store, () => ({currentStep: 5}))
       domainStore.addTicket(finalData);
-    },
-
-    resetForm() {
-      patchState(store, initialState);
-    },
+    }
   })),
 );

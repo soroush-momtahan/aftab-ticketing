@@ -37,13 +37,10 @@ export class TicketForm {
     minLength(form.description, 6, { message: 'توضیحات وارد شده خیلی کوتاه هست' });
     maxLength(form.description, 3000, { message: 'توضیحات وارد شده خیلی طولانی است.' });
 
-    // بخش
     required(form.department, { message: 'لطفاً یک بخش را انتخاب کنید' });
 
-    // اولویت
     required(form.priority, { message: 'لطفاً یک اولویت را انتخاب کنید' });
 
-    // نام خانوادگی
     required(form.title, { message: 'وارد کردن عنوان الزامی است' });
     minLength(form.title, 3, { message: 'عنوان نباید کمتر از ۳ کاراکتر باشد' });
     maxLength(form.title, 100, { message: 'عنوان نباید بیشتر از ۱۰۰ کاراکتر باشد' });
@@ -99,12 +96,9 @@ export class TicketForm {
     }
   });
 
-  // استفاده از Effect برای واکنش به موفقیت سابمیت (مثلا ریدایرکت یا بستن مدال)
   constructor() {
     effect(() => {
       if (this.store.isSuccess()) {
-        // اینجا می‌توانی یک Toast نشان دهی، کاربر را ریدایرکت کنی
-        // یا فرم را به حالت اولیه برگردانی
       }
     });
   }
