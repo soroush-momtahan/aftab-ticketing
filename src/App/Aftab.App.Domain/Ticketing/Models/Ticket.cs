@@ -66,6 +66,10 @@ public class Ticket : Aggregate<TicketId>
 
     public void AddReply(string content, PersonId replierId, TicketStatus status = TicketStatus.InProgress)
     {
+        if (Status == TicketStatus.Closed)
+        {
+            return;   
+        }
         var replyTicket = ReplyTicket.Create(Id, replierId, content);
         _replyTickets.Add(replyTicket);
         UpdatedAt = DateTime.UtcNow;
