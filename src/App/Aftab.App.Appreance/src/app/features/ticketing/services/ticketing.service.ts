@@ -1,7 +1,7 @@
 import { TicketDepartment } from '../enums/ticket-department.enum';
 import { TicketPriority } from '../enums/ticket-priority.enum';
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TicketStatus } from '../enums/ticket-status.enum';
 
@@ -24,7 +24,7 @@ export interface GetTicketsRequest {
 
 export interface GetTicketResponse {
   ticket: TicketDto;
-  Replies: ReplyTicketDto[];
+  replies: ReplyTicketDto[];
 }
 
 export interface TicketDto {
@@ -36,6 +36,8 @@ export interface TicketDto {
   priority: TicketPriority;
   department: TicketDepartment;
   status: TicketStatus;
+  createdAt: Date | null;
+  modifiedAt: Date | null;
 }
 
 export interface ReplyTicketDto {
@@ -57,12 +59,34 @@ export class TicketingService {
     return this.http.get<GetTicketResponse>(`${this.baseUrl}/tickets/${ticketId}`);
   }
   getTickets(req: GetTicketsRequest): Observable<GetTicketResponse[]>{
-    return this.http.get<GetTicketResponse[]>(
-      `${this.baseUrl}/tickets?SearchString=${req.searchString}&SortByPriority=${req.sortByPriority?? false}&FilterByDepartment=${req.filterByDepartment}&FilterByStatus=${req.filterByStatus}&FilterByPersonId=${req.filterByPersonId}&PageIndex=${req.pageIndex}&PageSize=${req.pageSize}`,
-    );
+    let params = new HttpParams()
+      .set('SortByPriority', req.sortByPriority)
+      .set('PageIndex', req.pageIndex)
+      .set('PageSize', req.pageSize);
+
+    if (req.searchString?.trim()) {
+      params = params.set('SearchString', req.searchString.trim());
+    }
+
+    if (req.filterByDepartment != null) {
+      params = params.set('FilterByDepartment', req.filterByDepartment);
+    }
+
+    if (req.filterByStatus != null) {
+      params = params.set('FilterByStatus', req.filterByStatus);
+    }
+
+    if (req.filterByPersonId != null) {
+      params = params.set('FilterByPersonId', req.filterByPersonId);
+    }
+
+    return this.http.get<GetTicketResponse[]>(`${this.baseUrl}/Tickets`, { params });
   }
-  addReply(ticketId: string, content: string): Observable<void>{
-    return this.http.post<void>(`${this.baseUrl}/tickets/${ticketId}/reply`, content);
+  addReply(ticketId: string, content: string, status:TicketStatus): Observable<void>{
+    return this.http.post<void>(
+      `${this.baseUrl}/tickets/${ticketId}/reply?content=${content}&status=${status}`,
+      {}
+    );
   }
   changeStatus(ticketId: string, status: TicketStatus): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/tickets/${ticketId}/status`, status);

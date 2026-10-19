@@ -1,8 +1,8 @@
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { computed, inject } from '@angular/core';
 import { AddTicketRequest } from '../../../services/ticketing.service';
-import { TicketingStore } from '../../../store/ticketing.store';
 import { TicketFormInputModel } from '../ticket-form';
+import { TicketingStore } from '../../../store/ticketing.store';
 
 interface TicketFormStore {
   currentStep: number;

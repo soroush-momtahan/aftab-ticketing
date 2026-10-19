@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Aftab.App.Application.Ticketing.Features.Commands.AddReplyTicket;
+using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.Shared.Domain.Results;
 using Aftab.Shared.Presentation.ApiResults;
 using Aftab.Shared.Presentation.Endpoints;
@@ -15,14 +16,15 @@ internal sealed class AddReplyTicketEndpoint : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("/api/tickets/{ticketId}/reply", async (
-            string ticketId, 
+            string ticketId,
             string content,
+            TicketStatus? status,
             ClaimsPrincipal person,
             ISender sender) =>
         {
             string currentPersonId = person.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
                                       person.FindFirstValue("sub");
-            Result result = await sender.Send(new AddReplyTicketCommand(ticketId, currentPersonId!, content));
+            Result result = await sender.Send(new AddReplyTicketCommand(ticketId, currentPersonId!, content, status));
             return result.Match(() => Results.Ok(), ApiResults.Problem);
         })
         .WithTags(Tags.Ticketing)

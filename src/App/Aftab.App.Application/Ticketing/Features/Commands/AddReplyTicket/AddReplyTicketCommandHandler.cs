@@ -1,8 +1,10 @@
 using Aftab.App.Application.Abstraction;
+using Aftab.App.Domain.Identity.Enums;
 using Aftab.App.Domain.People.Errors;
 using Aftab.App.Domain.People.Models;
 using Aftab.App.Domain.People.Repository;
 using Aftab.App.Domain.People.ValueObjects;
+using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.App.Domain.Ticketing.Errors;
 using Aftab.App.Domain.Ticketing.Models;
 using Aftab.App.Domain.Ticketing.Repository;
@@ -44,8 +46,16 @@ internal sealed class AddReplyTicketCommandHandler(
         {
             return Result.Failure(TicketingErrors.NotFound(command.TicketId));
         }
+
+        if (person.RoleType == RoleType.Agent && command.Status.HasValue)
+        {
+            ticket.AddReply(command.Content, personIdOrError.Value, command.Status ?? TicketStatus.InProgress);
+        }
+        else
+        {
+            ticket.AddReply(command.Content, personIdOrError.Value);
+        }
         
-        ticket.AddReply(command.Content, personIdOrError.Value);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

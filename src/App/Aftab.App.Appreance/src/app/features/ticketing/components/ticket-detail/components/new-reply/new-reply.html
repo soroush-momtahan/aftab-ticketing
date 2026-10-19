@@ -1,0 +1,68 @@
+<!-- ========== NEW REPLY FORM ========== -->
+<div
+  class="rounded-2xl border border-[#2a2a2a] bg-[#111] p-5
+         shadow-[0_4px_24px_-6px_rgba(0,0,0,0.5)]"
+>
+  <h3 class="mb-4 text-sm font-semibold tracking-wide text-[#e5e5e5]">پاسخ جدید</h3>
+
+  <!-- Admin-only Status Changer -->
+  @if (isAdmin()) {
+    <div class="mb-5">
+      <p class="mb-2.5 text-xs font-medium uppercase tracking-wider text-[#666]">
+        تغییر وضعیت تیکت
+      </p>
+      <div class="flex flex-wrap gap-2">
+        @for (opt of statusOptions(); track opt.value) {
+          <button
+            type="button"
+            (click)="onSelectStatus(opt.value)"
+            class="rounded-full border px-4 py-1.5 text-xs font-medium tracking-wide
+                   transition-all duration-200"
+            [class]="
+              form.status().value() === opt.value
+                ? 'border-[#e3ab1c] bg-[#e3ab1c]/15 text-[#e3ab1c] shadow-[0_0_0_1px_#e3ab1c]'
+                : 'border-[#2a2a2a] bg-[#0a0a0a] text-[#a3a3a3] hover:border-[#3a3a3a] hover:text-[#e5e5e5]'
+            "
+          >
+            {{ opt.label }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <textarea
+    [formField]="form.content"
+    rows="4"
+    placeholder="پاسخ خود را اینجا بنویسید..."
+    class="mb-4 w-full resize-none rounded-xl border border-[#2a2a2a] bg-[#0a0a0a]
+           px-4 py-3 text-sm leading-relaxed text-[#fcf7e8]
+           placeholder:text-[#555]
+           transition-all duration-300
+           focus:border-[#e3ab1c]/50 focus:outline-none focus:ring-2 focus:ring-[#e3ab1c]/15"
+  ></textarea>
+
+  <div class="flex justify-end">
+    <button
+      type="button"
+      (click)="onSendReply()"
+      [disabled]="form().invalid() || isSubmitting()"
+      class="group relative inline-flex items-center gap-2 overflow-hidden rounded-full
+             px-6 py-2.5 text-sm font-semibold tracking-wide text-[#0a0a0a]
+             transition-all duration-300
+             enabled:hover:scale-[1.02] enabled:active:scale-[0.98]
+             disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      <span
+        class="absolute inset-0 rounded-full
+               bg-gradient-to-b from-[#f4dda4] via-[#e3ab1c] to-[#b68816]
+               transition-all duration-300
+               group-hover:from-[#f9eed2] group-hover:via-[#e9bb49] group-hover:to-[#e3ab1c]"
+      ></span>
+      <span class="absolute inset-[1px] rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-50"></span>
+      <span class="relative z-10">
+        {{ isSubmitting() ? 'در حال ارسال...' : 'ارسال پاسخ' }}
+      </span>
+    </button>
+  </div>
+</div>

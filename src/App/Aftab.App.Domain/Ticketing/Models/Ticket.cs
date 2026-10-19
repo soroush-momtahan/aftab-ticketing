@@ -64,7 +64,7 @@ public class Ticket : Aggregate<TicketId>
         AddDomainEvent(new TicketStatusUpdatedEvent(Id));
     }
 
-    public void AddReply(string content, PersonId replierId)
+    public void AddReply(string content, PersonId replierId, TicketStatus status = TicketStatus.InProgress)
     {
         var replyTicket = ReplyTicket.Create(Id, replierId, content);
         _replyTickets.Add(replyTicket);
@@ -72,7 +72,7 @@ public class Ticket : Aggregate<TicketId>
         bool isNotOwner = replierId != PersonId;
         if (isNotOwner)
         {
-            Status = TicketStatus.InProgress;
+            Status = status;
         }
 
         AddDomainEvent(new ReplyTicketAddedEvent(Id, replyTicket.Id));
