@@ -2,6 +2,15 @@
 import { TicketStatus } from '../enums/ticket-status.enum';
 import { TicketPriority } from '../enums/ticket-priority.enum';
 import { TicketDepartment } from '../enums/ticket-department.enum';
+import { TicketingStep } from '../enums/ticketing-step.enum';
+
+const STEP_LABELS: Record<TicketingStep, string> = {
+  [TicketingStep.ProblemDesc]: 'شرح مشکل',
+  [TicketingStep.RelevantSection]: 'بخش',
+  [TicketingStep.ProblemPriority]: 'اولویت',
+  [TicketingStep.ProblemTitle]: 'عنوان',
+  [TicketingStep.Confirmation]: 'تأیید',
+};
 
 // ---------- Status ----------
 const STATUS_LABELS: Record<TicketStatus, string> = {
@@ -56,6 +65,13 @@ const DEPARTMENT_LABELS: Record<TicketDepartment, string> = {
 export const getDepartmentLabel = (d: TicketDepartment): string => DEPARTMENT_LABELS[d] ?? '—';
 
 // ---------- Options (برای دکمه‌های فیلتر) ----------
+export const STEP_OPTIONS = [
+  TicketingStep.ProblemDesc,
+  TicketingStep.RelevantSection,
+  TicketingStep.ProblemPriority,
+  TicketingStep.ProblemTitle,
+  TicketingStep.Confirmation,
+].map((value) => ({ value, label: STEP_LABELS[value] }));
 export const DEPARTMENT_OPTIONS = [
   TicketDepartment.Support,
   TicketDepartment.Sale,

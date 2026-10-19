@@ -6,6 +6,7 @@ import { AddTicketRequest } from '../../services/ticketing.service';
 import { mapToRequest, TicketFormStore } from './store/ticket-form.store';
 import { TicketingStore } from '../../store/ticketing.store';
 import { RouterLink } from '@angular/router';
+import { DEPARTMENT_OPTIONS, STATUS_OPTIONS, STEP_OPTIONS } from '../../mappers/ticket.mappers';
 
 export interface TicketFormInputModel {
   description: string;
@@ -23,7 +24,9 @@ export interface TicketFormInputModel {
 })
 export class TicketForm {
   readonly store = inject(TicketFormStore);
-
+  protected readonly steps = STEP_OPTIONS;
+  protected readonly departments = DEPARTMENT_OPTIONS;
+  protected readonly TicketDepartment = TicketDepartment;
   ticketFormInputModel = signal<TicketFormInputModel>({
     description: '',
     department: null,
@@ -45,33 +48,6 @@ export class TicketForm {
     minLength(form.title, 3, { message: 'عنوان نباید کمتر از ۳ کاراکتر باشد' });
     maxLength(form.title, 100, { message: 'عنوان نباید بیشتر از ۱۰۰ کاراکتر باشد' });
   });
-
-  readonly steps = [
-    { id: 1, label: 'شرح مشکل' },
-    { id: 2, label: 'بخش' },
-    { id: 3, label: 'اولویت' },
-    { id: 4, label: 'عنوان' },
-    { id: 5, label: 'تأیید' },
-  ];
-
-  readonly departments = [
-    {
-      id: TicketDepartment.Support as TicketDepartment,
-      label: 'پشتیبانی',
-    },
-    {
-      id: TicketDepartment.Sale as TicketDepartment,
-      label: 'فروش',
-    },
-    {
-      id: TicketDepartment.Technical as TicketDepartment,
-      label: 'فنی',
-    },
-    {
-      id: TicketDepartment.Management as TicketDepartment,
-      label: 'مدیریت',
-    },
-  ];
 
   readonly priorities = [
     { id: TicketPriority.Low as TicketPriority, label: 'کم', short: 'L', desc: 'غیرفوری' },
@@ -96,13 +72,6 @@ export class TicketForm {
     }
   });
 
-  constructor() {
-    effect(() => {
-      if (this.store.isSuccess()) {
-      }
-    });
-  }
-
   onSelectDepartment(ticketDepartment: TicketDepartment) {
     this.ticketFormInputModel.update((form) => ({ ...form, department: ticketDepartment }));
   }
@@ -126,6 +95,4 @@ export class TicketForm {
     const payload = mapToRequest(this.ticketFormInputModel());
     this.store.submitTicket(payload);
   }
-
-  protected readonly TicketDepartment = TicketDepartment;
 }

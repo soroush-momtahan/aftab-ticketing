@@ -3,15 +3,18 @@ import { computed, inject } from '@angular/core';
 import { AddTicketRequest } from '../../../services/ticketing.service';
 import { TicketFormInputModel } from '../ticket-form';
 import { TicketingStore } from '../../../store/ticketing.store';
+import { TicketingStep } from '../../../enums/ticketing-step.enum';
 
 interface TicketFormStore {
-  currentStep: number;
-  maxSteps: number;
+  currentStep: TicketingStep;
+  prevStep: TicketingStep;
+  maxSteps: TicketingStep;
 }
 
 const initialState: TicketFormStore = {
-  currentStep: 1,
-  maxSteps: 5,
+  currentStep: TicketingStep.ProblemDesc,
+  prevStep: TicketingStep.ProblemDesc,
+  maxSteps: TicketingStep.Confirmation,
 };
 
 export const mapToRequest = (formModel: TicketFormInputModel): AddTicketRequest => ({
