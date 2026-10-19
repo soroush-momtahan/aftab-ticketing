@@ -24,10 +24,12 @@ export const routes: Routes = [
   {
     path: 'ticket-detail/:id',
     component: TicketDetail,
+    canActivate: [authGuard],
   },
   {
     path: 'ticket-list',
     component: TicketList,
+    canActivate: [authGuard],
   },
   {
     path: 'test',

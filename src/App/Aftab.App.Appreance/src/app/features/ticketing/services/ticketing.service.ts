@@ -4,6 +4,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TicketStatus } from '../enums/ticket-status.enum';
+import { TicketsPage } from '../models/tickets-page.model';
 
 export interface AddTicketRequest {
   title: string;
@@ -58,7 +59,7 @@ export class TicketingService {
   getTicket(ticketId: string): Observable<GetTicketResponse> {
     return this.http.get<GetTicketResponse>(`${this.baseUrl}/tickets/${ticketId}`);
   }
-  getTickets(req: GetTicketsRequest): Observable<GetTicketResponse[]>{
+  getTickets(req: GetTicketsRequest): Observable<TicketsPage>{
     let params = new HttpParams()
       .set('SortByPriority', req.sortByPriority)
       .set('PageIndex', req.pageIndex)
@@ -80,7 +81,7 @@ export class TicketingService {
       params = params.set('FilterByPersonId', req.filterByPersonId);
     }
 
-    return this.http.get<GetTicketResponse[]>(`${this.baseUrl}/Tickets`, { params });
+    return this.http.get<TicketsPage>(`${this.baseUrl}/Tickets`, { params });
   }
   addReply(ticketId: string, content: string, status:TicketStatus): Observable<void>{
     return this.http.post<void>(

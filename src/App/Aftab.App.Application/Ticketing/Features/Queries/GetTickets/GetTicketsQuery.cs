@@ -15,7 +15,7 @@ public record GetTicketsQuery(
     int PageSize = 10) : IQuery<PaginatedResult<GetTicketsQuery.Result>>
 {
     public record Result(
-        TicketDto TicketDto,
+        TicketDto Ticket,
         List<ReplyTicketDto> Replies);
     
     public record ReplyTicketDto(

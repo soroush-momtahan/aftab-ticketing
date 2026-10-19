@@ -5,6 +5,7 @@ import { TicketPriority } from '../../enums/ticket-priority.enum';
 import { AddTicketRequest } from '../../services/ticketing.service';
 import { mapToRequest, TicketFormStore } from './store/ticket-form.store';
 import { TicketingStore } from '../../store/ticketing.store';
+import { RouterLink } from '@angular/router';
 
 export interface TicketFormInputModel {
   description: string;
@@ -14,7 +15,7 @@ export interface TicketFormInputModel {
 }
 
 @Component({
-  imports: [FormField],
+  imports: [FormField, RouterLink],
   selector: 'app-ticketing',
   providers: [TicketFormStore, TicketingStore],
   styleUrl: './ticket-form.css',
