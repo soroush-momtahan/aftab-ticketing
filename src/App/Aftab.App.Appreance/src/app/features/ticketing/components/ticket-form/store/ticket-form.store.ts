@@ -25,14 +25,12 @@ export const TicketFormStore = signalStore(
   withState(initialState),
   withComputed((store, domainStore = inject(TicketingStore)) => ({
     progressPercent: computed(() => ((store.currentStep() - 1) / (store.maxSteps() - 1)) * 100),
-    // ۲. الگوی Facade: بازتاب وضعیت لودینگ و خطا از Store اصلی بدون افشای خود Store اصلی
     isSubmitting: computed(() => domainStore.isLoading()),
     isSuccess: computed(() => domainStore.isSuccess()),
     hasError: computed(() => domainStore.hasError()),
   })),
   withMethods((store, domainStore = inject(TicketingStore)) => ({
     nextStep() {
-      // فقط Step را مدیریت می‌کنیم، نیازی به کش کردن دیتا نیست
       patchState(store, (state) => ({
         currentStep: Math.min(state.currentStep + 1, state.maxSteps),
       }));
@@ -43,8 +41,6 @@ export const TicketFormStore = signalStore(
         currentStep: Math.max(state.currentStep - 1, 1),
       }));
     },
-
-    // حالا دیتای نهایی فقط موقع سابمیت به Store پاس داده می‌شود
     submitTicket(finalData: AddTicketRequest) {
       if (store.currentStep() !== store.maxSteps() - 1) return;
       patchState(store, () => ({currentStep: 5}))
