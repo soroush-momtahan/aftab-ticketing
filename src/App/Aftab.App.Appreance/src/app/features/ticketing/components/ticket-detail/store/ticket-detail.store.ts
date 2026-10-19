@@ -1,15 +1,20 @@
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { computed, inject } from '@angular/core';
-import {
-  AddTicketRequest,
-  GetTicketResponse,
-  ReplyTicketDto,
-  TicketDto,
-} from '../../../services/ticketing.service';
+import { GetTicketResponse, ReplyTicketDto, TicketDto } from '../../../services/ticketing.service';
 import { TicketStatus } from '../../../enums/ticket-status.enum';
 import { TicketPriority } from '../../../enums/ticket-priority.enum';
 import { TicketDepartment } from '../../../enums/ticket-department.enum';
 import { TicketEntity, TicketingStore } from '../../../store/ticketing.store';
+
+export interface TicketDetailViewModel extends GetTicketResponse {
+  statusLabel: string;
+  statusBadgeClass: string;
+  statusDotClass: string;
+  departmentLabel: string;
+  priorityLabel: string;
+  priorityBadgeClass: string;
+  createdAtLabel: string;
+}
 
 export const TicketDetailStore = signalStore(
   withComputed((store, domainStore = inject(TicketingStore)) => {
@@ -88,10 +93,10 @@ export const TicketDetailStore = signalStore(
   }),
   withMethods((store, domainStore = inject(TicketingStore)) => ({
     addReply(content: string, status: TicketStatus) {
-      domainStore.addReply({ content, status});
+      domainStore.addReply({ content, status });
     },
     getTicket(ticketId: string) {
       domainStore.loadSingleTicket(ticketId);
-    }
+    },
   })),
 );

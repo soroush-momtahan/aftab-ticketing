@@ -1,12 +1,11 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { TicketDepartment } from '../../enums/ticket-department.enum';
 import { TicketPriority } from '../../enums/ticket-priority.enum';
-import { AddTicketRequest } from '../../services/ticketing.service';
 import { mapToRequest, TicketFormStore } from './store/ticket-form.store';
 import { TicketingStore } from '../../store/ticketing.store';
 import { RouterLink } from '@angular/router';
-import { DEPARTMENT_OPTIONS, STATUS_OPTIONS, STEP_OPTIONS } from '../../mappers/ticket.mappers';
+import { DEPARTMENT_OPTIONS, STEP_OPTIONS } from '../../mappers/ticket.mappers';
 
 export interface TicketFormInputModel {
   description: string;

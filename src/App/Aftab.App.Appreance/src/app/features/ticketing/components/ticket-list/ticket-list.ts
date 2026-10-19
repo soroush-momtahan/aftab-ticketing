@@ -19,7 +19,6 @@ export class TicketList {
   protected readonly statuses = STATUS_OPTIONS;
   protected readonly skeletons = [1, 2, 3, 4, 5];
 
-  // مقدار input محلی نگه داشته می‌شود تا با debounce، متن در حال تایپ برنگردد
   protected readonly searchText = signal('');
 
   protected onSearch(value: string) {

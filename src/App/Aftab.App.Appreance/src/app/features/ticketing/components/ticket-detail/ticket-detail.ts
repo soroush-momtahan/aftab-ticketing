@@ -1,27 +1,11 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TicketDetailStore } from './store/ticket-detail.store';
-import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { NewReply, NewReplyInput } from './components/new-reply/new-reply';
 import { TicketingStore } from '../../store/ticketing.store';
 import { tick } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 
-type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
-type Department = 'support' | 'sales' | 'technical';
-type Priority = 'low' | 'medium' | 'high';
-
-interface Ticket {
-  id: string;
-  title: string;
-  description: string;
-  status: TicketStatus;
-  department: Department;
-  priority: Priority;
-  createdAt: string;
-  updatedAt: string;
-  customerName: string;
-}
 
 interface Reply {
   id: string;
@@ -31,12 +15,6 @@ interface Reply {
   createdAt: string;
   editedAt: string | null;
   isOwn: boolean; // for showing edit/delete controls
-}
-
-interface TicketDetailInputModel {
-  editedTicketContent: string;
-  newTicketStatus: TicketStatus | null;
-  newTicketSReply: string;
 }
 @Component({
   imports: [FormsModule, NewReply],

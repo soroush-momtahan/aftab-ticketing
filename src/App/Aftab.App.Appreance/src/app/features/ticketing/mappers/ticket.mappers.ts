@@ -51,8 +51,15 @@ const PRIORITY_BADGE_CLASSES: Record<TicketPriority, string> = {
   [TicketPriority.High]: 'border-[#e3ab1c]/50 bg-[#e3ab1c]/10 text-[#e3ab1c]',
 };
 
+const PRIORITY_TEXT_CLASSES: Record<TicketPriority, string> = {
+  [TicketPriority.Low]: 'text-[#a3a3a3]',
+  [TicketPriority.Medium]: 'text-[#e9bb49]',
+  [TicketPriority.High]: 'text-[#e3ab1c]',
+};
+
 export const getPriorityLabel = (p: TicketPriority): string => PRIORITY_LABELS[p] ?? '—';
 export const getPriorityBadgeClass = (p: TicketPriority): string => PRIORITY_BADGE_CLASSES[p] ?? '';
+export const getPriorityTextClass = (p: TicketPriority): string => PRIORITY_TEXT_CLASSES[p] ?? '';
 
 // ---------- Department ----------
 const DEPARTMENT_LABELS: Record<TicketDepartment, string> = {
