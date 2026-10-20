@@ -55,8 +55,6 @@ import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs';
 import {TokenService} from '../token/token.service';
-
-// تایپ‌های مطابق با رکوردهای C# که ساختیم
 export interface LoginRequest { email: string; password: string; }
 export interface LoginResponse { token: string; email: string; username?: string; }
 

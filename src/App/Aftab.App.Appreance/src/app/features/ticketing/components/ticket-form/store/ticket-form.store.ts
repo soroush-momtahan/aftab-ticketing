@@ -7,14 +7,12 @@ import { TicketingStep } from '../../../enums/ticketing-step.enum';
 
 interface TicketFormStore {
   currentStep: TicketingStep;
-  prevStep: TicketingStep;
   maxSteps: TicketingStep;
 }
 
 const initialState: TicketFormStore = {
-  currentStep: TicketingStep.ProblemDesc,
-  prevStep: TicketingStep.ProblemDesc,
-  maxSteps: TicketingStep.Confirmation,
+  currentStep: 1,
+  maxSteps: 5,
 };
 
 export const mapToRequest = (formModel: TicketFormInputModel): AddTicketRequest => ({

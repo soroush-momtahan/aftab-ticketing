@@ -1,4 +1,3 @@
-// // ۱. تعریف مدل اختصاصی برای انتیتی‌ها
 // import {
 //   AddTicketRequest,
 //   GetTicketResponse,
@@ -14,7 +13,6 @@
 //   withState,
 // } from '@ngrx/signals';
 // import {
-//   addEntity,
 //   removeEntity,
 //   setAllEntities,
 //   setEntity,
@@ -28,24 +26,24 @@
 //   withRequestStatus,
 // } from '../../../core/store/features/request-status.festure';
 // import { computed, inject } from '@angular/core';
-// import { concatMap, delay, exhaustMap, pipe, switchMap, tap } from 'rxjs';
+// import { exhaustMap, pipe, switchMap, tap } from 'rxjs';
 // import { rxMethod } from '@ngrx/signals/rxjs-interop';
 // import { tapResponse } from '@ngrx/operators';
 // import { ProblemDetails } from '../../../core/models/errors/problem-details';
 // import { TicketStatus } from '../enums/ticket-status.enum';
+// import { TicketsPage } from '../models/tickets-page.model';
 //
 // export type TicketEntity = GetTicketResponse & { id: string };
 //
-// // ۲. متد کمکی برای تبدیل Response به Entity
 // const mapToEntity = (res: GetTicketResponse): TicketEntity => ({
 //   id: res.ticket.id,
 //   ...res,
 // });
 //
-// // ۳. تعریف State برای فیلترها (بسیار مهم برای صفحه‌بندی و جستجو)
 // interface TicketingState {
 //   filters: GetTicketsRequest;
 //   selectedTicketId: string | null;
+//   totalCount: number; // تعداد کل نتایج (قبل از صفحه‌بندی) از سرور
 // }
 //
 // const initialState: TicketingState = {
@@ -56,21 +54,20 @@
 //     filterByStatus: null,
 //     filterByDepartment: null,
 //     pageIndex: 1,
-//     pageSize: 10,
+//     pageSize: 8,
 //   },
-//   selectedTicketId: null
+//   selectedTicketId: null,
+//   totalCount: 0,
 // };
 //
 // export const TicketingStore = signalStore(
-//   { providedIn: 'root' }, // اگر این Store گلوبال است. اگر مربوط به یک پنل خاص است، در کامپوننت پروواید شود.
+//   { providedIn: 'root' },
 //
 //   withState(initialState),
-//   withEntities<TicketEntity>(), // جادوی NgRx: اضافه شدن entityMap, ids, entities
-//   withRequestStatus(), // مدیریت هوشمند Loading و Error که قبلا ساختیم
+//   withEntities<TicketEntity>(),
+//   withRequestStatus(),
 //
 //   withComputed(({ entityMap, selectedTicketId }) => ({
-//     // این سیگنال اتوماتیک تیکت فعال را برمی‌گرداند.
-//     // اگر آیدی نبود یا تیکت در لیست نبود، null برمی‌گرداند.
 //     selectedTicket: computed(() => {
 //       const id = selectedTicketId();
 //       return id ? (entityMap()[id] ?? null) : null;
@@ -78,21 +75,22 @@
 //   })),
 //
 //   withMethods((store, ticketingService = inject(TicketingService)) => ({
-//     // --- کوئری‌ها (Queries - GET) ---
 //     setSelectedTicketId(id: string | null) {
 //       patchState(store, { selectedTicketId: id });
 //     },
-//     // استفاده از switchMap: اگر کاربر تند تند فیلتر را عوض کرد، فقط ریکوئست آخر مهم است
 //     loadTickets: rxMethod<GetTicketsRequest>(
 //       pipe(
 //         tap(() => patchState(store, setPending())),
 //         switchMap((filters) =>
 //           ticketingService.getTickets(filters).pipe(
 //             tapResponse({
-//               next: (responses) => {
-//                 const entities = responses.map(mapToEntity);
-//                 // setAllEntities دیکشنری قبلی را پاک کرده و با دیتای جدید جایگزین می‌کند
-//                 patchState(store, setAllEntities(entities), setFulfilled());
+//               next: (page: TicketsPage) => {
+//                 patchState(
+//                   store,
+//                   setAllEntities(page.data.map(mapToEntity)),
+//                   { totalCount: page.count },
+//                   setFulfilled(),
+//                 );
 //               },
 //               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
 //             }),
@@ -101,25 +99,17 @@
 //       ),
 //     ),
 //
-//     // بارگذاری یک تیکت خاص (مثلا برای رفرش کردن دیتا بعد از افزودن ریپلای)
 //     loadSingleTicket: rxMethod<string>(
 //       pipe(
+//         tap(() => patchState(store, setPending())),
 //         switchMap((ticketId) =>
 //           ticketingService.getTicket(ticketId).pipe(
 //             tapResponse({
 //               next: (response) => {
-//                 console.log(response);
 //                 const entity = mapToEntity(response);
-//                 // addEntity یا updateEntity به صورت هوشمند عمل می‌کنند.
-//                 // ما از setEntity استفاده می‌کنیم که اگر بود آپدیت کند، اگر نبود بسازد.
-//                 patchState(
-//                   store,
-//                   setEntity(entity), // ✅ جایگزین شد
-//                   { selectedTicketId: entity.id },
-//                   setFulfilled(),
-//                 );
+//                 patchState(store, setEntity(entity), { selectedTicketId: entity.id }, setFulfilled());
 //               },
-//               error: (err: ProblemDetails) => console.error(err), // هندلینگ خطای سایلنت
+//               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
 //             }),
 //           ),
 //         ),
@@ -128,41 +118,15 @@
 //   })),
 //
 //   withMethods((store, ticketingService = inject(TicketingService)) => ({
-//     // --- مدیریت فیلترها ---
 //     updateFilters(newFilters: Partial<GetTicketsRequest>) {
 //       patchState(store, (state) => ({
 //         filters: { ...state.filters, ...newFilters },
 //       }));
 //     },
 //
-//     // --- کامندها (Commands - POST / PATCH / DELETE) ---
-//
-//     // استفاده از concatMap: اگر کاربر دو بار پشت سر هم وضعیت را تغییر داد، به ترتیب اجرا شود
-//     // changeStatus: rxMethod<{ id: string; status: TicketStatus }>(
-//     //   pipe(
-//     //     tap(() => patchState(store, setPending())),
-//     //     concatMap(({ id, status }) =>
-//     //       ticketingService.changeStatus(id, status).pipe(
-//     //         tapResponse({
-//     //           next: () => {
-//     //             // آپدیت کردن Entity در کش کلاینت (بدون نیاز به ریکوئست مجدد)
-//     //             patchState(
-//     //               store,
-//     //               updateEntity({
-//     //                 id,
-//     //                 changes: (entity) => ({
-//     //                   data: { ...entity.ticket, status },
-//     //                 }),
-//     //               }),
-//     //               setFulfilled(),
-//     //             );
-//     //           },
-//     //           error: (err: ProblemDetails) => patchState(store, setRejected(err)),
-//     //         }),
-//     //       ),
-//     //     ),
-//     //   ),
-//     // ),
+//     reloadTickets() {
+//       store.loadTickets(store.filters());
+//     },
 //
 //     addTicket: rxMethod<AddTicketRequest>(
 //       pipe(
@@ -172,26 +136,7 @@
 //             tapResponse({
 //               next: () => {
 //                 patchState(store, setFulfilled());
-//               },
-//               error: (err: ProblemDetails) => {
-//                 patchState(store, setRejected(err));
-//               },
-//             }),
-//           ),
-//         ),
-//       ),
-//     ),
-//
-//     // استفاده از exhaustMap: جلوگیری از دبل کلیک کاربر روی دکمه حذف
-//     deleteTicket: rxMethod<string>(
-//       pipe(
-//         tap(() => patchState(store, setPending())),
-//         exhaustMap((id) =>
-//           ticketingService.softDelete(id).pipe(
-//             tapResponse({
-//               next: () => {
-//                 // حذف بلافاصله تیکت از UI پس از تایید سرور
-//                 patchState(store, removeEntity(id), setFulfilled());
+//                 store.loadTickets(store.filters());
 //               },
 //               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
 //             }),
@@ -200,8 +145,24 @@
 //       ),
 //     ),
 //
-//     // عملیات‌هایی که void برمی‌گردانند و ساختار پیچیده (لیست Replies) دارند
-//     // منطقی‌ترین کار: بعد از موفقیت، کل آن تیکت را مجدد از سرور بگیریم
+//     deleteTicket: rxMethod<string>(
+//       pipe(
+//         tap(() => patchState(store, setPending())),
+//         exhaustMap((id) =>
+//           ticketingService.softDelete(id).pipe(
+//             tapResponse({
+//               next: () => {
+//                 patchState(store, removeEntity(id), setFulfilled());
+//                 // برای اینکه صفحه‌بندی و totalCount دقیق بماند، لیست دوباره گرفته می‌شود
+//                 store.loadTickets(store.filters());
+//               },
+//               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
+//             }),
+//           ),
+//         ),
+//       ),
+//     ),
+//
 //     addReply: rxMethod<{ content: string; status: TicketStatus }>(
 //       pipe(
 //         tap(() => patchState(store, setPending())),
@@ -210,9 +171,7 @@
 //             tapResponse({
 //               next: () => {
 //                 patchState(store, setFulfilled());
-//                 // رفرش کردن تیکت برای دریافت دیتای جدید به همراه آیدی ریپلای ایجاد شده
-//                 // به این تکنیک Dispatch Action Delegation می‌گویند
-//                 delay(5000)
+//                 // (delay(5000) قبلی هیچ اثری نداشت؛ حذف شد)
 //                 store.loadSingleTicket(store.selectedTicketId()!);
 //               },
 //               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
@@ -229,8 +188,6 @@
 //           ticketingService.softDeleteReply(ticketId, replyId).pipe(
 //             tapResponse({
 //               next: () => {
-//                 patchState(store, setFulfilled());
-//                 // آپدیت دستی کلاینت ساید (چون حذف نیازی به رفرش از سرور ندارد و آیدی را داریم)
 //                 patchState(
 //                   store,
 //                   updateEntity({
@@ -239,6 +196,7 @@
 //                       replies: entity.replies.filter((r) => r.id !== replyId),
 //                     }),
 //                   }),
+//                   setFulfilled(),
 //                 );
 //               },
 //               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
@@ -249,11 +207,9 @@
 //     ),
 //   })),
 //
-//   // --- شاهکار معماری Reactive: گره زدن فیلترها به متد Load ---
+//   // هر بار filters تغییر کند، loadTickets خودکار اجرا می‌شود
 //   withHooks({
 //     onInit(store) {
-//       // به محض اینکه store مقداردهی شد، یا هر زمان که سیگنال store.filters تغییر کرد،
-//       // به صورت اتوماتیک متد loadTickets کال می‌شود!
 //       store.loadTickets(store.filters);
 //     },
 //   }),
@@ -265,6 +221,7 @@ import {
   AddTicketRequest,
   GetTicketResponse,
   GetTicketsRequest,
+  ReplyTicketDto,
   TicketingService,
 } from '../services/ticketing.service';
 import {
@@ -289,7 +246,7 @@ import {
   withRequestStatus,
 } from '../../../core/store/features/request-status.festure';
 import { computed, inject } from '@angular/core';
-import { exhaustMap, pipe, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, exhaustMap, pipe, retry, switchMap, tap } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { ProblemDetails } from '../../../core/models/errors/problem-details';
@@ -297,16 +254,19 @@ import { TicketStatus } from '../enums/ticket-status.enum';
 import { TicketsPage } from '../models/tickets-page.model';
 
 export type TicketEntity = GetTicketResponse & { id: string };
+export type SubmitState = 'idle' | 'pending' | 'success' | 'error';
 
-const mapToEntity = (res: GetTicketResponse): TicketEntity => ({
-  id: res.ticket.id,
-  ...res,
-});
+const mapToEntity = (res: GetTicketResponse): TicketEntity => ({ id: res.ticket.id, ...res });
+
+// آپدیت immutable لیست پاسخ‌های یک تیکت
+const patchReplies = (id: string, fn: (replies: ReplyTicketDto[]) => ReplyTicketDto[]) =>
+  updateEntity<TicketEntity>({ id, changes: (e) => ({ replies: fn(e.replies) }) });
 
 interface TicketingState {
   filters: GetTicketsRequest;
   selectedTicketId: string | null;
-  totalCount: number; // تعداد کل نتایج (قبل از صفحه‌بندی) از سرور
+  totalCount: number;
+  replyState: SubmitState; // وضعیت ثبت پاسخ جدید (برای دکمه ارسال و پاک شدن فرم)
 }
 
 const initialState: TicketingState = {
@@ -321,6 +281,7 @@ const initialState: TicketingState = {
   },
   selectedTicketId: null,
   totalCount: 0,
+  replyState: 'idle',
 };
 
 export const TicketingStore = signalStore(
@@ -339,24 +300,22 @@ export const TicketingStore = signalStore(
 
   withMethods((store, ticketingService = inject(TicketingService)) => ({
     setSelectedTicketId(id: string | null) {
-      patchState(store, { selectedTicketId: id });
+      patchState(store, { selectedTicketId: id, replyState: 'idle' });
     },
 
-    // switchMap: با تغییر سریع فیلترها فقط آخرین ریکوئست مهم است
     loadTickets: rxMethod<GetTicketsRequest>(
       pipe(
         tap(() => patchState(store, setPending())),
         switchMap((filters) =>
           ticketingService.getTickets(filters).pipe(
             tapResponse({
-              next: (page: TicketsPage) => {
+              next: (page: TicketsPage) =>
                 patchState(
                   store,
                   setAllEntities(page.data.map(mapToEntity)),
                   { totalCount: page.count },
                   setFulfilled(),
-                );
-              },
+                ),
               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
             }),
           ),
@@ -366,14 +325,12 @@ export const TicketingStore = signalStore(
 
     loadSingleTicket: rxMethod<string>(
       pipe(
-        tap(() => patchState(store, setPending())),
-        switchMap((ticketId) =>
-          ticketingService.getTicket(ticketId).pipe(
+        // اگر تیکت قبلا کش شده باشد همان لحظه نمایش داده می‌شود و بعد آپدیت می‌شود
+        tap((id) => patchState(store, { selectedTicketId: id, replyState: 'idle' }, setPending())),
+        switchMap((id) =>
+          ticketingService.getTicket(id).pipe(
             tapResponse({
-              next: (response) => {
-                const entity = mapToEntity(response);
-                patchState(store, setEntity(entity), { selectedTicketId: entity.id }, setFulfilled());
-              },
+              next: (res) => patchState(store, setEntity(mapToEntity(res)), setFulfilled()),
               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
             }),
           ),
@@ -384,12 +341,9 @@ export const TicketingStore = signalStore(
 
   withMethods((store, ticketingService = inject(TicketingService)) => ({
     updateFilters(newFilters: Partial<GetTicketsRequest>) {
-      patchState(store, (state) => ({
-        filters: { ...state.filters, ...newFilters },
-      }));
+      patchState(store, (state) => ({ filters: { ...state.filters, ...newFilters } }));
     },
 
-    // رفرش لیست با فیلترهای فعلی (بعد از افزودن/حذف)
     reloadTickets() {
       store.loadTickets(store.filters());
     },
@@ -419,7 +373,6 @@ export const TicketingStore = signalStore(
             tapResponse({
               next: () => {
                 patchState(store, removeEntity(id), setFulfilled());
-                // برای اینکه صفحه‌بندی و totalCount دقیق بماند، لیست دوباره گرفته می‌شود
                 store.loadTickets(store.filters());
               },
               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
@@ -429,54 +382,97 @@ export const TicketingStore = signalStore(
       ),
     ),
 
+    // ثبت پاسخ: چون سرور چیزی برنمی‌گرداند، بعد از موفقیت تیکت را دوباره می‌گیریم.
+    // اگر سرور هنوز پاسخ جدید را نشان نداد (تاخیر read-side/کش)، چند بار با فاصله کوتاه تکرار می‌کنیم
+    // تا پاسخ ظاهر شود؛ نه delay ثابت، نه رفرش دستی صفحه.
     addReply: rxMethod<{ content: string; status: TicketStatus }>(
       pipe(
-        tap(() => patchState(store, setPending())),
-        exhaustMap(({ content, status }) =>
-          ticketingService.addReply(store.selectedTicketId()!, content, status).pipe(
+        tap(() => patchState(store, { replyState: 'pending' })),
+        exhaustMap(({ content, status }) => {
+          const ticketId = store.selectedTicketId()!;
+          const expectedCount = (store.selectedTicket()?.replies.length ?? 0) + 1;
+
+          return ticketingService.addReply(ticketId, content, status).pipe(
+            switchMap(() =>
+              ticketingService.getTicket(ticketId).pipe(
+                tap((res) => {
+                  if (res.replies.length < expectedCount) throw new Error('stale');
+                }),
+                retry({ count: 4, delay: 750 }),
+                // اگر بعد از چند تلاش هم قدیمی بود، آخرین نسخه را نشان بده
+                catchError(() => ticketingService.getTicket(ticketId)),
+              ),
+            ),
             tapResponse({
-              next: () => {
-                patchState(store, setFulfilled());
-                // (delay(5000) قبلی هیچ اثری نداشت؛ حذف شد)
-                store.loadSingleTicket(store.selectedTicketId()!);
-              },
-              error: (err: ProblemDetails) => patchState(store, setRejected(err)),
+              next: (res) =>
+                patchState(
+                  store,
+                  setEntity(mapToEntity(res)),
+                  { replyState: 'success' },
+                  setFulfilled(),
+                ),
+              error: (err: ProblemDetails) =>
+                patchState(store, { replyState: 'error' }, setRejected(err)),
             }),
-          ),
-        ),
+          );
+        }),
       ),
     ),
 
-    deleteReply: rxMethod<{ ticketId: string; replyId: string }>(
+    // ویرایش پاسخ: Optimistic update + rollback در صورت خطا
+    updateReply: rxMethod<{ ticketId: string; replyId: string; content: string }>(
       pipe(
-        tap(() => patchState(store, setPending())),
-        exhaustMap(({ ticketId, replyId }) =>
-          ticketingService.softDeleteReply(ticketId, replyId).pipe(
+        concatMap(({ ticketId, replyId, content }) => {
+          const snapshot = store.entityMap()[ticketId]?.replies ?? [];
+          patchState(
+            store,
+            patchReplies(ticketId, (rs) =>
+              rs.map((r) => (r.id === replyId ? { ...r, content } : r)),
+            ),
+          );
+          return ticketingService.updateReplyContent(ticketId, replyId, content).pipe(
             tapResponse({
-              next: () => {
+              next: () => patchState(store, setFulfilled()),
+              error: (err: ProblemDetails) =>
                 patchState(
                   store,
-                  updateEntity({
-                    id: ticketId,
-                    changes: (entity) => ({
-                      replies: entity.replies.filter((r) => r.id !== replyId),
-                    }),
-                  }),
-                  setFulfilled(),
-                );
-              },
-              error: (err: ProblemDetails) => patchState(store, setRejected(err)),
+                  patchReplies(ticketId, () => snapshot),
+                  setRejected(err),
+                ),
             }),
-          ),
-        ),
+          );
+        }),
+      ),
+    ),
+
+    // حذف پاسخ: Optimistic update + rollback در صورت خطا
+    deleteReply: rxMethod<{ ticketId: string; replyId: string }>(
+      pipe(
+        concatMap(({ ticketId, replyId }) => {
+          const snapshot = store.entityMap()[ticketId]?.replies ?? [];
+          patchState(
+            store,
+            patchReplies(ticketId, (rs) => rs.filter((r) => r.id !== replyId)),
+          );
+          return ticketingService.softDeleteReply(ticketId, replyId).pipe(
+            tapResponse({
+              next: () => patchState(store, setFulfilled()),
+              error: (err: ProblemDetails) =>
+                patchState(
+                  store,
+                  patchReplies(ticketId, () => snapshot),
+                  setRejected(err),
+                ),
+            }),
+          );
+        }),
       ),
     ),
   })),
-
-  // هر بار filters تغییر کند، loadTickets خودکار اجرا می‌شود
-  withHooks({
-    onInit(store) {
-      store.loadTickets(store.filters);
-    },
-  }),
+    // withHooks({
+    //   onInit(store) {
+    //     store.loadTickets(store.filters);
+    //   },
+    // }),
+  // توجه: هوک لود لیست از اینجا به TicketListStore منتقل شده (توضیحات در پیام).
 );

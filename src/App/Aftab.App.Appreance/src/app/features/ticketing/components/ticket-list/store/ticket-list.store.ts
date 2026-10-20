@@ -1,6 +1,6 @@
 // مسیر: ticketing/pages/ticket-list/store/ticket-list.store.ts
 import { computed, inject } from '@angular/core';
-import { signalStore, withComputed, withMethods } from '@ngrx/signals';
+import { signalStore, withComputed, withHooks, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { debounceTime, distinctUntilChanged, pipe, tap } from 'rxjs';
 import { TicketingStore } from '../../../store/ticketing.store';
@@ -121,4 +121,9 @@ export const TicketListStore = signalStore(
       }
     },
   })),
+  withHooks({
+    onInit(store, domainStore = inject(TicketingStore)) {
+      domainStore.loadTickets(domainStore.filters);
+    },
+  }),
 );
