@@ -11,6 +11,7 @@ using Aftab.App.Infrastructure.Identity.Services;
 using Aftab.App.Infrastructure.People.Repository;
 using Aftab.App.Infrastructure.Ticketing.Repository;
 using Aftab.App.Infrastructure.Ticketing.Services;
+using Aftab.Shared.Application.Authorization;
 using Aftab.Shared.Infrastructure.Extensions;
 using Aftab.Shared.Infrastructure.Outbox;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +36,8 @@ public static class AftabConfigurations
             .AddReadDb(readDbConnString)
             .AddIdentityServices()
             .AddRedisCacheServices(cacheConnString);
-            
+
+        builder.Services.AddScoped<IPermissionService, PermissionService>();
         return builder;
     }
     private static IHostApplicationBuilder AddIdentityServices(this IHostApplicationBuilder builder)

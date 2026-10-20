@@ -96,7 +96,7 @@ import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { inject } from '@angular/core';
-import { pipe, exhaustMap, tap, delay } from 'rxjs';
+import { pipe, exhaustMap, tap, delay, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { SignOnService, SignUpRequest } from '../services/sign-on.service';
@@ -104,6 +104,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProblemDetails } from '../../../core/models/errors/problem-details';
 import { TokenService } from '../../../core/services/token/token.service';
 import { UserService } from '../../../core/services/user/user.service';
+import { SessionService } from '../../../core/services/session/session.service';
 
 export type AuthStep =
   'PHONE' | 'METHOD_SELECT' | 'OTP' | 'PASSWORD_LOGIN' | 'SET_PASSWORD' | 'SET_NAME' | 'SUCCESS';
@@ -136,6 +137,7 @@ export const AuthStore = signalStore(
       userService = inject(UserService),
       router = inject(Router),
       route = inject(ActivatedRoute),
+      session = inject(SessionService),
     ) => ({
       switchToErrorStatus() {
         patchState(store, { status: 'error' });
@@ -241,11 +243,12 @@ export const AuthStore = signalStore(
                     });
                   } else {
                     // کاربر قدیمی است: توکن برگشتی در واقع همان JWT لاگین است
-                    tokenService.setToken(res.tempToken);
+                    // tokenService.setToken(res.tempToken);
+                    session.signIn(res.tempToken);
                     patchState(store, {
                       status: 'success',
                     });
-                    userService.setUser({ name: store.phone(), mobile: store.phone() });
+                    // userService.setUser({ name: store.phone(), mobile: store.phone() });
                     const returnUrl = route.snapshot.queryParams['returnUrl'] || '/';
                     router.navigateByUrl(returnUrl);
                   }
@@ -282,9 +285,9 @@ export const AuthStore = signalStore(
           tap(() => patchState(store, { status: 'loading', error: null })),
           exhaustMap((password) =>
             signOnService.signInWithPassword({ mobile: store.phone(), password }).pipe(
+              switchMap((res) => session.signIn(res.token)),
               tapResponse({
-                next: (res) => {
-                  tokenService.setToken(res.token);
+                next: () => {
                   patchState(store, { status: 'success', step: 'SUCCESS' });
                   const returnUrl = route.snapshot.queryParams['returnUrl'] || '/';
                   router.navigateByUrl(returnUrl);
@@ -316,9 +319,10 @@ export const AuthStore = signalStore(
                 tempToken: store.tempToken()!, // ارسال توکن موقت از استور
               })
               .pipe(
+                switchMap((res) => session.signIn(res.token)),
                 tapResponse({
                   next: (res) => {
-                    tokenService.setToken(res.token);
+                    // tokenService.setToken(res.token);
                     patchState(store, {
                       status: 'success',
                       step: 'SUCCESS',

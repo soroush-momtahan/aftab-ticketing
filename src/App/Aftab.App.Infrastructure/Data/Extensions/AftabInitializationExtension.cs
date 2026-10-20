@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Aftab.App.Infrastructure.Data.ReadDb;
+using Aftab.Shared.Application.Authorization;
 using Aftab.Shared.Application.Caching;
 using Aftab.Shared.Infrastructure.Caching;
-using Aftab.Shared.Infrastructure.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

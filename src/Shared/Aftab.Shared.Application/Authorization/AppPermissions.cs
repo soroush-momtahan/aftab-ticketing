@@ -1,4 +1,4 @@
-namespace Aftab.Shared.Infrastructure.Security;
+namespace Aftab.Shared.Application.Authorization;
 
 public static class AppPermissions
 {
@@ -15,7 +15,7 @@ public static class AppPermissions
     {
         return typeof(AppPermissions)
             .GetNestedTypes()
-            .SelectMany(c => c.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy))
+            .SelectMany(c => c.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
             .Select(f => f.GetValue(null)?.ToString())
             .Where(v => v != null)
             .Cast<string>()

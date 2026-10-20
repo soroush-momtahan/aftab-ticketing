@@ -2,6 +2,10 @@
   <Folder Name="/App/">
     <Project Path="src/App/Aftab.App.Api/Aftab.App.Api.csproj" />
     <Project Path="src/App/Aftab.App.Application/Aftab.App.Application.csproj" />
+    <Project Path="src/App/Aftab.App.Appreance/Aftab.App.Appreance.esproj">
+      <BuildType Project="Debug" />
+      <Build />
+    </Project>
     <Project Path="src/App/Aftab.App.Domain/Aftab.App.Domain.csproj" />
     <Project Path="src/App/Aftab.App.Host/Aftab.App.Host.csproj" />
     <Project Path="src/App/Aftab.App.Infrastructure/Aftab.App.Infrastructure.csproj" />
