@@ -1,6 +1,7 @@
 using Aftab.App.Application.Ticketing.Services;
 using Aftab.App.Domain.Ticketing.ValueObjects;
 using Aftab.App.Infrastructure.Data.ReadDb;
+using Microsoft.EntityFrameworkCore;
 
 namespace Aftab.App.Infrastructure.Ticketing.Services;
 
@@ -12,24 +13,26 @@ public class TicketingReporterQueryService(
         await dbContext.AddAsync(ticketReporterView, cancellationToken);
     }
 
-    public Task<TicketReporterView?> GetByTicketIdAsync(TicketId ticketId, CancellationToken cancellationToken)
+    public async Task<TicketReporterView?> GetByTicketIdAsync(TicketId ticketId, CancellationToken cancellationToken)
     {
-        
-        throw new NotImplementedException();
+
+        return await dbContext.TicketReporterViews.FirstOrDefaultAsync(t => EF.Functions.JsonContains(
+                t.Statuses,
+                new[] { new { Id = ticketId } }), cancellationToken);
     }
 
     public void Update(TicketReporterView ticketReporterView)
     {
-        throw new NotImplementedException();
+        dbContext.Update(ticketReporterView);
     }
 
     public void Delete(TicketReporterView ticketReporterView)
     {
-        throw new NotImplementedException();
+        dbContext.Remove(ticketReporterView);
     }
 
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

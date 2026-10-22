@@ -25,7 +25,7 @@ internal sealed class CreateTicketReporterViewOnOrganAssignedToTicket(
         }
         var ticketReporterView = new TicketReporterView()
         {
-            OrganId = ticket.OrganId
+            OrganId = ticket.OrganId,
         };
         ticketReporterView.Statuses.Add(TicketReporterView.ToTicketReporterStatus(ticket));
         
