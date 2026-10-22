@@ -33,6 +33,12 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("OrganName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("آفتاب آسا بخش تستی");
+
                     b.HasKey("Id");
 
                     b.ToTable("TicketReporterViews");

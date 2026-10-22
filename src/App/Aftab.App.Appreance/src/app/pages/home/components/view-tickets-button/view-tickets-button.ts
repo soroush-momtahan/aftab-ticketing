@@ -9,10 +9,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './view-tickets-button.html',
 })
 export class ViewTicketsButton {
-  /** Button text – default is “مشاهده تیکت‌ها” */
   label = input('مشاهده تیکت‌ها');
-
-  /** Router link – default goes to tickets list */
   link = input('/ticket-list');
 
   readonly isHovered = signal(false);

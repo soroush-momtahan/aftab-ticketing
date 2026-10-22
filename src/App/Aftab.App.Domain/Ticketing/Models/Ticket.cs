@@ -127,7 +127,7 @@ public class Ticket : Aggregate<TicketId>
     public void AssignOrgan(OrganId organId)
     {
         OrganId = organId;
-        AddDomainEvent(new OrganAssignedToTicketEvent(Id));
+        AddDomainEvent(new OrganAssignedToTicketEvent(Id, organId));
     }
 
     public Result ChangeReplyVisibility(

@@ -1,1 +1,194 @@
-<p>ticket-reporter works!</p>
+<section class="relative min-h-screen bg-[#0a0a0a] text-[#fcf7e8] overflow-hidden">
+  <!-- Industrial grid -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-[0.035]"
+    style="background-image: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
+               linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+               background-size: 56px 56px;"
+  ></div>
+
+  <!-- Ambient gold glow -->
+  <div
+    class="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2
+               h-[380px] w-[700px] rounded-full
+               bg-[radial-gradient(ellipse,rgba(227,171,28,0.08)_0%,transparent_70%)]
+               blur-3xl"
+  ></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
+    <!-- Header -->
+    <div class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1
+          class="text-3xl font-semibold tracking-tight text-[#fcf7e8] sm:text-4xl lg:text-5xl"
+          style="letter-spacing: -0.035em;"
+        >
+          گزارش وضعیت تیکت‌ها
+        </h1>
+        <p class="mt-3 text-base text-[#a3a3a3]">
+          نمای کلی از تعداد تیکت‌های باز، در حال انجام، پاسخ‌داده‌شده و بسته به تفکیک سازمان
+        </p>
+      </div>
+
+      <a
+        routerLink="/ticketing"
+        class="inline-flex items-center gap-2 rounded-full border border-[#2a2a2a]
+                   bg-[#111] px-5 py-2.5 text-sm font-medium text-[#e5e5e5]
+                   transition-all duration-300
+                   hover:border-[#e3ab1c]/40 hover:text-[#e3ab1c]"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        بازگشت به تیکت‌ها
+      </a>
+    </div>
+
+    <!-- ========== GLOBAL SUMMARY ========== -->
+    <div class="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      @for (metric of globalMetrics(); track metric.key) {
+        <div
+          class="rounded-2xl border border-[#2a2a2a] bg-[#111]/80 p-5
+                     backdrop-blur-sm transition-all duration-300
+                     hover:border-[#333] hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)]"
+        >
+          <p class="mb-2 text-[11px] font-medium uppercase tracking-wider text-[#666]">
+            {{ metric.label }}
+          </p>
+          <p
+            class="text-3xl font-semibold tabular-nums tracking-tight"
+            [class]="metric.colorClass"
+            style="letter-spacing: -0.03em;"
+          >
+            {{ metric.value }}
+          </p>
+        </div>
+      }
+    </div>
+
+    <!-- ========== ORGANIZATION CARDS ========== -->
+    <div class="space-y-5">
+      @if (isLoading()) {
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="h-40 animate-pulse rounded-2xl border border-[#2a2a2a] bg-[#111]"></div>
+        }
+      } @else {
+        @for (report of reports(); track report.id; let i = $index) {
+          <div
+            class="group rounded-2xl border border-[#2a2a2a] bg-[#111] p-6
+                       transition-all duration-300
+                       hover:border-[#333] hover:shadow-[0_12px_40px_-10px_rgba(0,0,0,0.6)]"
+            [style.animation-delay.ms]="i * 60"
+            style="animation: fadeSlideIn 0.45s ease-out both;"
+          >
+            <!-- Org Header -->
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2
+                  class="text-lg font-semibold tracking-tight text-[#fcf7e8] sm:text-xl"
+                  style="letter-spacing: -0.02em;"
+                >
+                  {{ report.organName }}
+                </h2>
+                <p class="mt-1 text-xs text-[#666]">شناسه: {{ report.organId }}</p>
+              </div>
+              <div
+                class="rounded-full border border-[#2a2a2a] bg-[#0a0a0a] px-4 py-1.5
+                           text-xs font-medium tabular-nums text-[#a3a3a3]"
+              >
+                مجموع: {{ report.totalStatusCount }} تیکت
+              </div>
+            </div>
+
+            <!-- Status Metrics -->
+            <div class="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div class="rounded-xl border border-[#2a2a2a] bg-[#0a0a0a] p-3.5">
+                <div class="mb-1.5 flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-[#e3ab1c]"></span>
+                  <span class="text-[11px] font-medium text-[#888]">باز</span>
+                </div>
+                <p class="text-2xl font-semibold tabular-nums text-[#e3ab1c]">
+                  {{ report.openTickets }}
+                </p>
+              </div>
+
+              <div class="rounded-xl border border-[#2a2a2a] bg-[#0a0a0a] p-3.5">
+                <div class="mb-1.5 flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-blue-400"></span>
+                  <span class="text-[11px] font-medium text-[#888]">در حال انجام</span>
+                </div>
+                <p class="text-2xl font-semibold tabular-nums text-blue-300">
+                  {{ report.inprogressTickets }}
+                </p>
+              </div>
+
+              <div class="rounded-xl border border-[#2a2a2a] bg-[#0a0a0a] p-3.5">
+                <div class="mb-1.5 flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                  <span class="text-[11px] font-medium text-[#888]">پاسخ‌داده‌شده</span>
+                </div>
+                <p class="text-2xl font-semibold tabular-nums text-emerald-300">
+                  {{ report.answeredTickets }}
+                </p>
+              </div>
+
+              <div class="rounded-xl border border-[#2a2a2a] bg-[#0a0a0a] p-3.5">
+                <div class="mb-1.5 flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-[#555]"></span>
+                  <span class="text-[11px] font-medium text-[#888]">بسته</span>
+                </div>
+                <p class="text-2xl font-semibold tabular-nums text-[#a3a3a3]">
+                  {{ report.closedTickets }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Stacked Progress Bar -->
+            <div class="relative h-2.5 w-full overflow-hidden rounded-full bg-[#1a1a1a]">
+              @if (report.totalStatusCount > 0) {
+                <div class="absolute inset-y-0 left-0 flex w-full">
+                  <div
+                    class="h-full bg-[#e3ab1c] transition-all duration-700"
+                    [style.width.%]="(report.openTickets / report.totalStatusCount) * 100"
+                  ></div>
+                  <div
+                    class="h-full bg-blue-400 transition-all duration-700"
+                    [style.width.%]="(report.inprogressTickets / report.totalStatusCount) * 100"
+                  ></div>
+                  <div
+                    class="h-full bg-emerald-400 transition-all duration-700"
+                    [style.width.%]="(report.answeredTickets / report.totalStatusCount) * 100"
+                  ></div>
+                  <div
+                    class="h-full bg-[#444] transition-all duration-700"
+                    [style.width.%]="(report.closedTickets / report.totalStatusCount) * 100"
+                  ></div>
+                </div>
+              }
+            </div>
+
+            <!-- Legend percentages -->
+            <div class="mt-3 flex flex-wrap gap-4 text-[11px] text-[#666]">
+                  <span class="flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[#e3ab1c]"></span>
+                    {{ percent(report.openTickets, report.totalStatusCount) }}٪ باز
+                  </span>
+              <span class="flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+                {{ percent(report.inprogressTickets, report.totalStatusCount) }}٪ در حال انجام
+                  </span>
+              <span class="flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                {{ percent(report.answeredTickets, report.totalStatusCount) }}٪ پاسخ‌داده‌شده
+                  </span>
+              <span class="flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[#555]"></span>
+                {{ percent(report.closedTickets, report.totalStatusCount) }}٪ بسته
+                  </span>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>

@@ -8,6 +8,7 @@ public static class AppPermissions
         public const string Read = "Tickets:read";
         public const string Update = "Tickets:update";
         public const string Delete = "Tickets:delete";
+        public const string Reports = "Tickets:Reports";
     }
     public static class Organs
     {

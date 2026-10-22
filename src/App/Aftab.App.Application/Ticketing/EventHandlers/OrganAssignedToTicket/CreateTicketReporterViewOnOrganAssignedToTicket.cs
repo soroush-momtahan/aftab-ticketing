@@ -1,4 +1,7 @@
 using Aftab.App.Application.Ticketing.Services;
+using Aftab.App.Domain.Organization.Errors;
+using Aftab.App.Domain.Organization.Models;
+using Aftab.App.Domain.Organization.Repository;
 using Aftab.App.Domain.Ticketing.Errors;
 using Aftab.App.Domain.Ticketing.Events;
 using Aftab.App.Domain.Ticketing.Models;
@@ -10,6 +13,7 @@ namespace Aftab.App.Application.Ticketing.EventHandlers.OrganAssignedToTicket;
 
 internal sealed class CreateTicketReporterViewOnOrganAssignedToTicket(
     ITicketingRepository ticketingRepository,
+    IOrganizationRepository organizationRepository,
     ITicketingReporterQueryService ticketingReporterQueryService) : DomainEventHandler<OrganAssignedToTicketEvent>
 {
     public override async Task Handle(
@@ -23,11 +27,16 @@ internal sealed class CreateTicketReporterViewOnOrganAssignedToTicket(
                 nameof(CreateTicketReporterViewOnOrganAssignedToTicket),
                 TicketingErrors.NotFound(domainEvent.TicketId));
         }
-        var ticketReporterView = new TicketReporterView()
+
+        Organ? organ = await organizationRepository.GetByIdAsync(domainEvent.OrganId, cancellationToken);
+        if (organ is null)
         {
-            OrganId = ticket.OrganId!,
-        };
-        ticketReporterView.Statuses.Add(TicketReporterView.ToTicketReporterStatus(ticket));
+            throw new AftabException(
+                nameof(CreateTicketReporterViewOnOrganAssignedToTicket),
+                OrganizationErrors.NotFound);
+        }
+        
+        var ticketReporterView = TicketReporterView.ToTicketReporterView(ticket, organ);
         
         await ticketingReporterQueryService.CreateAsync(ticketReporterView, cancellationToken);
         await ticketingReporterQueryService.SaveChangesAsync(cancellationToken);

@@ -15,6 +15,9 @@ internal sealed class TicketReporterViewConfiguration : IEntityTypeConfiguration
 
         builder.Property(x => x.OrganId)
             .HasMaxLength(50);
+        
+        builder.Property(x => x.OrganName)
+            .HasDefaultValue("آفتاب آسا بخش تستی");
 
         builder.Ignore(x => x.TotalStatusCount);
         builder.Ignore(x => x.OpenTickets);

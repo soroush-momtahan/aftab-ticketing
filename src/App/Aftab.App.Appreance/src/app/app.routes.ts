@@ -6,6 +6,7 @@ import { authGuard } from './core/guard/auth.guard';
 import { TestToast } from './pages/test-toast/test-toast';
 import { TicketDetail } from './features/ticketing/components/ticket-detail/ticket-detail';
 import { TicketList } from './features/ticketing/components/ticket-list/ticket-list';
+import { TicketReporter } from './features/ticketing/components/ticket-reporter/ticket-reporter';
 
 export const routes: Routes = [
   {
@@ -32,7 +33,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'ticket-reporter',
+    component: TicketReporter,
+  },
+  {
     path: 'test',
     component: TestToast,
+    canActivate: [authGuard],
   },
 ];

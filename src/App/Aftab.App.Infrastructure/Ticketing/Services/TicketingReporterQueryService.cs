@@ -21,6 +21,11 @@ public class TicketingReporterQueryService(
                 new TicketReporterStatusView[] { new() { TicketId = ticketId } }), cancellationToken);
     }
 
+    public async Task<List<TicketReporterView>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await dbContext.TicketReporterViews.ToListAsync(cancellationToken);
+    }
+
     public void Update(TicketReporterView ticketReporterView)
     {
         dbContext.Update(ticketReporterView);

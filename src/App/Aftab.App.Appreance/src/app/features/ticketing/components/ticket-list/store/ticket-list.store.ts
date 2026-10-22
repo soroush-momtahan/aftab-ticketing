@@ -1,4 +1,3 @@
-// مسیر: ticketing/pages/ticket-list/store/ticket-list.store.ts
 import { computed, inject } from '@angular/core';
 import { signalStore, withComputed, withHooks, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -17,7 +16,6 @@ import {
   getStatusLabel,
 } from '../../../mappers/ticket.mappers';
 
-// ViewModel: دیتای خام + لیبل‌ها و کلاس‌های آماده نمایش
 export interface TicketListViewModel extends TicketDto {
   statusLabel: string;
   statusBadgeClass: string;

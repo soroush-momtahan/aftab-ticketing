@@ -1,3 +1,4 @@
+using Aftab.App.Domain.Organization.Models;
 using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.App.Domain.Ticketing.Models;
 using Aftab.App.Domain.Ticketing.ValueObjects;
@@ -8,6 +9,7 @@ public class TicketReporterView
 {
     public string Id { get; set; } = Guid.CreateVersion7().ToString();
     public string? OrganId { get; set; }
+    public string OrganName { get; set; }
     public List<TicketReporterStatusView> Statuses { get; set; } = [];
     public int TotalStatusCount => Statuses.Count;
     public int OpenTickets => Statuses.Count(x => x.Status == TicketStatus.Open);
@@ -15,13 +17,14 @@ public class TicketReporterView
     public int AnsweredTickets => Statuses.Count(x => x.Status == TicketStatus.Answered);
     public int ClosedTickets => Statuses.Count(x => x.Status == TicketStatus.Closed);
     
-    public static TicketReporterView ToTicketReporterView(Ticket ticket)
+    public static TicketReporterView ToTicketReporterView(Ticket ticket, Organ organ)
     {
         
         return new TicketReporterView()
         {
             OrganId = ticket.OrganId ?? string.Empty,
-            Statuses = []
+            OrganName = organ.Name,
+            Statuses = [ToTicketReporterStatus(ticket)]
         };
     }
 
@@ -46,6 +49,7 @@ public interface ITicketingReporterQueryService
 {
     Task CreateAsync(TicketReporterView ticketReporterView, CancellationToken cancellationToken);
     Task<TicketReporterView?> GetByTicketIdAsync(TicketId ticketId, CancellationToken cancellationToken);
+    Task<List<TicketReporterView>> GetAllAsync(CancellationToken cancellationToken);
     void Update(TicketReporterView ticketReporterView);
     void Delete(TicketReporterView ticketReporterView);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
