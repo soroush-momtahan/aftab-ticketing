@@ -18,7 +18,7 @@ public class TicketingReporterQueryService(
 
         return await dbContext.TicketReporterViews.FirstOrDefaultAsync(t => EF.Functions.JsonContains(
                 t.Statuses,
-                new[] { new { Id = ticketId } }), cancellationToken);
+                new TicketReporterStatusView[] { new() { TicketId = ticketId } }), cancellationToken);
     }
 
     public void Update(TicketReporterView ticketReporterView)

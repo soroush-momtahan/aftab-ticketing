@@ -58,8 +58,8 @@ internal sealed class TicketingQueryService(
                 Status = x.Status,
                 Title = x.Title,
                 Replies = onlyVisibleReplies ? 
-                    x.Replies.Where(r => r.IsVisible == onlyVisibleReplies).ToList() :
-                    x.Replies.Where(r => r.IsVisible == onlyVisibleReplies || r.ReplierId == x.PersonId).ToList()
+                    x.Replies.Where(r => r.IsVisible == onlyVisibleReplies || r.ReplierId == x.PersonId).ToList() :
+                    x.Replies.ToList()
             })
             .ToListAsync(cancellationToken);
         return result;

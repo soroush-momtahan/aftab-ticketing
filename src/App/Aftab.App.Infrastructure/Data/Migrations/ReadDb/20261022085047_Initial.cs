@@ -13,10 +13,24 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "TicketReporterViews",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    OrganId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Statuses = table.Column<string>(type: "jsonb", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketReporterViews", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TicketViews",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrganId = table.Column<Guid>(type: "uuid", nullable: true),
                     PersonId = table.Column<Guid>(type: "uuid", nullable: false),
                     DisplayName = table.Column<string>(type: "text", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
@@ -38,6 +52,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TicketReporterViews");
+
             migrationBuilder.DropTable(
                 name: "TicketViews");
         }

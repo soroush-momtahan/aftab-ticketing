@@ -1,4 +1,3 @@
-using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.App.Domain.Ticketing.Models;
 using Aftab.App.Domain.Ticketing.ValueObjects;
@@ -7,8 +6,8 @@ namespace Aftab.App.Application.Ticketing.Services;
 
 public class TicketReporterView
 {
-    public Guid Id { get; set; } = Guid.CreateVersion7();
-    public OrganId? OrganId { get; set; }
+    public string Id { get; set; } = Guid.CreateVersion7().ToString();
+    public string? OrganId { get; set; }
     public List<TicketReporterStatusView> Statuses { get; set; } = [];
     public int TotalStatusCount => Statuses.Count;
     public int OpenTickets => Statuses.Count(x => x.Status == TicketStatus.Open);
@@ -21,7 +20,7 @@ public class TicketReporterView
         
         return new TicketReporterView()
         {
-            OrganId = ticket.OrganId,
+            OrganId = ticket.OrganId ?? string.Empty,
             Statuses = []
         };
     }
@@ -38,7 +37,7 @@ public class TicketReporterView
 
 public class TicketReporterStatusView
 {
-    public TicketId TicketId { get; set; }
+    public string TicketId { get; set; }
     public TicketStatus Status { get; set; }
     
 }

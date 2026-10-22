@@ -9,6 +9,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Data\Migrations\ReadDb\" />
+      <Folder Include="Data\Migrations\WriteDb\" />
       <Folder Include="Data\ReadDb\TicketReporter\" />
     </ItemGroup>
 </Project>

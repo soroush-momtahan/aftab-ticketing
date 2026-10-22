@@ -25,25 +25,13 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
 
             modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketReporterView", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
-                    b.Property<Guid?>("OrganId")
-                        .HasColumnType("uuid");
-
-                    b.ComplexCollection(typeof(List<Dictionary<string, object>>), "Statuses", "Aftab.App.Application.Ticketing.Services.TicketReporterView.Statuses#TicketReporterStatusView", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("Status");
-
-                            b1.Property<Guid>("TicketId");
-
-                            b1
-                                .ToJson("Statuses")
-                                .HasColumnType("jsonb");
-                        });
+                    b.Property<string>("OrganId")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -118,6 +106,37 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                     b.HasKey("Id");
 
                     b.ToTable("TicketViews");
+                });
+
+            modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketReporterView", b =>
+                {
+                    b.OwnsMany("Aftab.App.Application.Ticketing.Services.TicketReporterStatusView", "Statuses", b1 =>
+                        {
+                            b1.Property<string>("TicketReporterViewId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<string>("Status")
+                                .IsRequired();
+
+                            b1.Property<string>("TicketId")
+                                .IsRequired()
+                                .HasMaxLength(50);
+
+                            b1.HasKey("TicketReporterViewId", "__synthesizedOrdinal");
+
+                            b1.ToTable("TicketReporterViews");
+
+                            b1
+                                .ToJson("Statuses")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TicketReporterViewId");
+                        });
+
+                    b.Navigation("Statuses");
                 });
 #pragma warning restore 612, 618
         }

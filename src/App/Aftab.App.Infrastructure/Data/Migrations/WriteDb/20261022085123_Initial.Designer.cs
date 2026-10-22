@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
 {
     [DbContext(typeof(AftabDbContext))]
-    [Migration("20261021153203_Update01")]
-    partial class Update01
+    [Migration("20261022085123_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

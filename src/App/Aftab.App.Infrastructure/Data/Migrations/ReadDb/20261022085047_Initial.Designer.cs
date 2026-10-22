@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
 {
     [DbContext(typeof(AftabReadDbContext))]
-    [Migration("20261015111333_Initial")]
+    [Migration("20261022085047_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,6 +25,21 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketReporterView", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("OrganId")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TicketReporterViews");
+                });
 
             modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketView", b =>
                 {
@@ -52,6 +67,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("OrganId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
 
@@ -76,6 +94,8 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
 
                             b1.Property<Guid>("Id");
 
+                            b1.Property<bool>("IsVisible");
+
                             b1.Property<string>("ReplierDisplayName")
                                 .IsRequired();
 
@@ -89,6 +109,37 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                     b.HasKey("Id");
 
                     b.ToTable("TicketViews");
+                });
+
+            modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketReporterView", b =>
+                {
+                    b.OwnsMany("Aftab.App.Application.Ticketing.Services.TicketReporterStatusView", "Statuses", b1 =>
+                        {
+                            b1.Property<string>("TicketReporterViewId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<string>("Status")
+                                .IsRequired();
+
+                            b1.Property<string>("TicketId")
+                                .IsRequired()
+                                .HasMaxLength(50);
+
+                            b1.HasKey("TicketReporterViewId", "__synthesizedOrdinal");
+
+                            b1.ToTable("TicketReporterViews");
+
+                            b1
+                                .ToJson("Statuses")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TicketReporterViewId");
+                        });
+
+                    b.Navigation("Statuses");
                 });
 #pragma warning restore 612, 618
         }

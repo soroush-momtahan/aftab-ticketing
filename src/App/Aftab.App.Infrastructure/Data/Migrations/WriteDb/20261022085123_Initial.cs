@@ -53,6 +53,22 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "Organs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Organs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OutboxMessageConsumer",
                 columns: table => new
                 {
@@ -86,6 +102,7 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleType = table.Column<string>(type: "text", nullable: false, defaultValue: "Client"),
+                    OrganId = table.Column<Guid>(type: "uuid", nullable: true),
                     Lastname = table.Column<string>(type: "text", nullable: false),
                     FullName_Lastname = table.Column<string>(type: "text", nullable: false),
                     Mobile = table.Column<string>(type: "text", nullable: false),
@@ -104,6 +121,7 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrganId = table.Column<Guid>(type: "uuid", nullable: true),
                     Content = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
@@ -234,6 +252,7 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
                     ReplierId = table.Column<Guid>(type: "uuid", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsVisible = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -304,6 +323,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Organs");
 
             migrationBuilder.DropTable(
                 name: "OutboxMessageConsumer");

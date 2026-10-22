@@ -1,7 +1,4 @@
 using Aftab.App.Application.Ticketing.Services;
-using Aftab.App.Domain.Organization.ValueObjects;
-using Aftab.App.Domain.Ticketing.ValueObjects;
-using Aftab.Shared.Infrastructure.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,14 +9,30 @@ internal sealed class TicketReporterViewConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<TicketReporterView> builder)
     {
         builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasMaxLength(50);
+
         builder.Property(x => x.OrganId)
-            .HasConversion<PrefixedGuidEfConverter<OrganId>>();
-        
-        builder.ComplexCollection(x => x.Statuses, repliesBuilder =>
+            .HasMaxLength(50);
+
+        builder.Ignore(x => x.TotalStatusCount);
+        builder.Ignore(x => x.OpenTickets);
+        builder.Ignore(x => x.InprogressTickets);
+        builder.Ignore(x => x.AnsweredTickets);
+        builder.Ignore(x => x.ClosedTickets);
+
+        builder.OwnsMany(x => x.Statuses, statusBuilder =>
         {
-            repliesBuilder.ToJson(nameof(TicketReporterView.Statuses));
-            repliesBuilder.Property(x => x.TicketId)
-                .HasConversion<PrefixedGuidEfConverter<TicketId>>();
+            statusBuilder.ToJson();
+
+            statusBuilder.Property(x => x.TicketId)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            statusBuilder.Property(x => x.Status)
+                .HasConversion<string>()
+                .IsRequired();
         });
     }
 }

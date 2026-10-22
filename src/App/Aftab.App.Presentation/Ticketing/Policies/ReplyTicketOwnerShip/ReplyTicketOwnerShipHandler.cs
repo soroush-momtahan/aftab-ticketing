@@ -17,7 +17,8 @@ public class ReplyTicketOwnerShipHandler(ISender sender, IHttpContextAccessor ht
         ReplyTicketOwnerShipRequirement requirement)
     {
         // اگر نقش Bypass داشته باشد ← دسترسی کامل
-        if (context.User.IsInRole(requirement.BypassRole) || 
+        if (context.User.IsInRole(requirement.BypassRole) ||
+            context.User.IsInRole(nameof(RoleType.Admin)) ||
             context.User.IsInRole(nameof(RoleType.Agent)))
         {
             context.Succeed(requirement);
