@@ -167,7 +167,7 @@ export const TicketDetailStore = signalStore(
         return {
           ...r,
           initial: r.replierDisplayName.charAt(0),
-          canEdit: isOwn,
+          canEdit: isOwn || isAdmin,
           canDelete: isOwn || isAdmin,
         };
       });

@@ -20,7 +20,7 @@ export class SessionService {
 
   readonly isAuthenticated = computed(() => this._session() !== null);
   readonly roles = computed(() => this._session()?.roles ?? []);
-  readonly isAdmin = computed(() => this.hasAnyRole('Agent'));
+  readonly isAdmin = computed(() => this.hasAnyRole('Admin'));
 
   private readonly permissionSet = computed(() => new Set(this._session()?.permissions ?? []));
 

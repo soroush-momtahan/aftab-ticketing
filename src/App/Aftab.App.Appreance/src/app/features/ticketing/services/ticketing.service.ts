@@ -180,7 +180,8 @@ export class TicketingService {
       .set('PageSize', req.pageSize);
 
     if (req.searchString?.trim()) params = params.set('SearchString', req.searchString.trim());
-    if (req.filterByDepartment != null) params = params.set('FilterByDepartment', req.filterByDepartment);
+    if (req.filterByDepartment != null)
+      params = params.set('FilterByDepartment', req.filterByDepartment);
     if (req.filterByStatus != null) params = params.set('FilterByStatus', req.filterByStatus);
     if (req.filterByPersonId != null) params = params.set('FilterByPersonId', req.filterByPersonId);
 
@@ -202,10 +203,16 @@ export class TicketingService {
     return this.http.patch<void>(`${this.baseUrl}/tickets/${ticketId}/reply`, content);
   }
 
-  updateReplyContent(ticketId: string, replyTicketId: string, content: string): Observable<void> {
+  updateReplyContent(
+    ticketId: string,
+    replyTicketId: string,
+    newContent: string,
+  ): Observable<void> {
+    let params = new HttpParams().set('newContent', newContent);
     return this.http.patch<void>(
       `${this.baseUrl}/tickets/${ticketId}/replies/${replyTicketId}/content`,
-      content,
+      null,
+      { params },
     );
   }
 
