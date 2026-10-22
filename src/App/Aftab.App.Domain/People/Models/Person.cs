@@ -1,4 +1,6 @@
 using Aftab.App.Domain.Identity.Enums;
+using Aftab.App.Domain.Organization.ValueObjects;
+using Aftab.App.Domain.People.Events;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.Shared.Domain.Objects;
 
@@ -13,6 +15,7 @@ public class Person : Aggregate<PersonId>
     public FullName FullName { get; private set; }
     public Mobile Mobile { get; private set; }
     public RoleType RoleType { get; private set; }
+    public OrganId? OrganId { get; private set; }
     
     private Person(){}
 
@@ -31,5 +34,11 @@ public class Person : Aggregate<PersonId>
         return new Person(
             fullName, 
             mobile);
+    }
+    public void AssignToOrgan(OrganId organId)
+    {
+        OrganId = organId;
+        RoleType = RoleType.Agent;
+        AddDomainEvent(new PersonAssignedToOrganEvent(Id));
     }
 }

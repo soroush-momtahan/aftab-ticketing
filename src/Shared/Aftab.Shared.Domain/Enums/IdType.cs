@@ -6,4 +6,5 @@ public enum IdType
     RplTkt,
     Prn,
     Idn,
+    Org
 }

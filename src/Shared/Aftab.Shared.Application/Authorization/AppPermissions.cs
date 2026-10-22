@@ -9,6 +9,20 @@ public static class AppPermissions
         public const string Update = "Tickets:update";
         public const string Delete = "Tickets:delete";
     }
+    public static class Organs
+    {
+        public const string Create = "Organs:create";
+        public const string Read = "Organs:read";
+        public const string Update = "Organs:update";
+        public const string Delete = "Organs:delete";
+    }
+    public static class ReplyTickets
+    {
+        public const string Create = "ReplyTickets:create";
+        public const string Read = "ReplyTickets:read";
+        public const string Update = "ReplyTickets:update";
+        public const string Delete = "ReplyTickets:delete";
+    }
 
     // متدی برای گرفتن تمام پرمیشن‌ها (برای زمان Seeding به درد می‌خورد)
     public static IReadOnlyList<string> GetAll()

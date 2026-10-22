@@ -1,4 +1,5 @@
 using Aftab.App.Domain.Identity.Enums;
+using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.People.Models;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.App.Domain.Ticketing.Enums;
@@ -11,6 +12,7 @@ public class TicketView
 {
     public TicketView() { }
     public TicketId Id { get; set; }
+    public OrganId? OrganId { get; set; }
     public PersonId PersonId { get; set; }
     public string DisplayName { get; set; }
     public string Title { get; set; }
@@ -29,6 +31,7 @@ public class TicketView
         public PersonId ReplierId { get; set; }
         public string ReplierDisplayName { get; set; }
         public string Content { get; set; }
+        public bool IsVisible { get; set; }
     }
     public static TicketView ToTicketView(Ticket ticket, Person person)
     {
@@ -36,6 +39,7 @@ public class TicketView
         return new TicketView()
         {
             Id = ticket.Id,
+            OrganId = ticket.OrganId,
             PersonId = ticket.PersonId,
             DisplayName = $"{person.FullName.Firstname} {person.FullName.Lastname}({ticketerRole})",
             Title = ticket.Title.Value,
@@ -49,13 +53,20 @@ public class TicketView
     }
     public static ReplyTicketView ToReplyTicketView(ReplyTicket replyTicket, Person person)
     {
-        string ticketerRole = person.RoleType == RoleType.Agent ? "مدیر" : "کاربر";
+        string replierRole = person.RoleType switch
+        {
+            RoleType.Admin  => "مدیر",
+            RoleType.Client => "کاربر",
+            RoleType.Agent  => "پشتیبان",
+            _ => "کاربر"
+        };
         return new TicketView.ReplyTicketView()
         {
             Id = replyTicket.Id,
             ReplierId = replyTicket.ReplierId,
-            ReplierDisplayName = $"{person.FullName.Firstname} {person.FullName.Lastname}({ticketerRole})",
+            ReplierDisplayName = $"{person.FullName.Firstname} {person.FullName.Lastname}({replierRole})",
             Content = replyTicket.Content,
+            IsVisible = replyTicket.IsVisible
         };
     }
     
@@ -67,9 +78,11 @@ public interface ITicketingQueryService
     Task<List<TicketView>> GetAllAsync(
         string? searchString,
         bool sortByPriority,
+        bool onlyVisibleReplies,
         TicketDepartment? filterByDepartment,
         TicketStatus? filterByStatus,
         PersonId? filterByPersonId,
+        OrganId? filterByOrganId,
         int pageIndex,
         int pageSize,
         CancellationToken cancellationToken);

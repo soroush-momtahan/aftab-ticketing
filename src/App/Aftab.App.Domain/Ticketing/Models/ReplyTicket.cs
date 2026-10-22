@@ -10,6 +10,7 @@ public class ReplyTicket : Entity<ReplyTicketId>
     public PersonId ReplierId { get; init; }
     public string Content { get; private set; }
     public bool IsDeleted { get; private set; }
+    public bool IsVisible { get; private set; }
     
     private ReplyTicket() {}
 
@@ -37,5 +38,10 @@ public class ReplyTicket : Entity<ReplyTicketId>
     internal void SoftDelete()
     {
         IsDeleted = true;
+    }
+    
+    public void ChangeVisibility(bool isVisible)
+    {
+        IsVisible = isVisible;
     }
 }

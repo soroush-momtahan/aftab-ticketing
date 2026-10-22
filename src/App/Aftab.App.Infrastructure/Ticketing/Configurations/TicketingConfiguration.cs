@@ -1,3 +1,4 @@
+using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.App.Domain.Ticketing.Models;
 using Aftab.App.Domain.Ticketing.ValueObjects;
@@ -17,6 +18,10 @@ internal sealed class TicketingConfiguration : IEntityTypeConfiguration<Ticket>
         
         builder.Property(x => x.PersonId)
             .HasConversion<PrefixedGuidEfConverter<PersonId>>();
+        
+        builder.Property(x => x.OrganId)
+            .HasConversion<PrefixedGuidEfConverter<OrganId>>()
+            .IsRequired(false);
 
         builder.ComplexProperty(x => x.Title, titleBuilder =>
         {

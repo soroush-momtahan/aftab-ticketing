@@ -1,3 +1,4 @@
+using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.App.Domain.Ticketing.Errors;
@@ -11,6 +12,7 @@ namespace Aftab.App.Domain.Ticketing.Models;
 public class Ticket : Aggregate<TicketId>
 {
     public PersonId PersonId { get; init; }
+    public OrganId? OrganId { get; private set; }
     public Title Title { get; init; }
     public string Content { get; private set; }
     public bool IsDeleted { get; private set; }
@@ -120,5 +122,26 @@ public class Ticket : Aggregate<TicketId>
         UpdatedAt = DateTime.UtcNow;
         DeletedAt = DateTime.UtcNow;
         AddDomainEvent(new TicketDeletedEvent(Id));
+    }
+    
+    public void AssignOrgan(OrganId organId)
+    {
+        OrganId = organId;
+        AddDomainEvent(new OrganAssignedToTicketEvent(Id));
+    }
+
+    public Result ChangeReplyVisibility(
+        ReplyTicketId replyTicketId,
+        bool visibility)
+    {
+        ReplyTicket? replyTicket = _replyTickets.SingleOrDefault(x => x.Id == replyTicketId);
+        if (replyTicket is null)
+        {
+            return Result.Failure(TicketingErrors.ReplyTicketNotFound(replyTicketId));
+        }
+        
+        replyTicket.ChangeVisibility(visibility);
+        AddDomainEvent(new ReplyTicketVisibilityChangedEvent(Id, replyTicketId));
+        return Result.Success();
     }
 }

@@ -1,4 +1,5 @@
 using Aftab.App.Application.Ticketing.Services;
+using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.App.Domain.Ticketing.Enums;
 
@@ -11,7 +12,8 @@ public static class TicketingQueryExtensions
         string? searchString,
         TicketDepartment? department,
         TicketStatus? status,
-        PersonId? personId)
+        PersonId? personId,
+        OrganId? organId)
     {
         if (!string.IsNullOrWhiteSpace(searchString))
         {
@@ -38,6 +40,11 @@ public static class TicketingQueryExtensions
         if (personId != null)
         {
             query = query.Where(t => t.PersonId == personId);
+        }
+
+        if (organId != null)
+        {
+            query = query.Where(t => t.OrganId == organId);
         }
 
         return query;

@@ -6,11 +6,14 @@ using Aftab.Shared.Application.Pagination;
 namespace Aftab.App.Application.Ticketing.Features.Queries.GetTickets;
 
 public record GetTicketsQuery(
+    string CurrentPerson,
     string? SearchString,
     bool SortByPriority,
+    bool OnlyVisibleReplies,
     TicketDepartment? FilterByDepartment,
     TicketStatus? FilterByStatus,
     string? FilterByPersonId,
+    string? FilterByOrganId,
     int PageIndex = 1,
     int PageSize = 10) : IQuery<PaginatedResult<GetTicketsQuery.Result>>
 {

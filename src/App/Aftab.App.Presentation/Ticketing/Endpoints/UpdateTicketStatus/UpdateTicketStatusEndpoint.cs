@@ -1,5 +1,6 @@
 using Aftab.App.Application.Ticketing.Features.Commands.UpdateTicketStatus;
 using Aftab.App.Domain.Ticketing.Enums;
+using Aftab.Shared.Application.Authorization;
 using Aftab.Shared.Domain.Results;
 using Aftab.Shared.Presentation.ApiResults;
 using Aftab.Shared.Presentation.Endpoints;

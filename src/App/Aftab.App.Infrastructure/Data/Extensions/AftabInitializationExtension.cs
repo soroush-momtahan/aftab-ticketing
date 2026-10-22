@@ -53,13 +53,20 @@ public static class AftabInitializationExtension
         var defaultRolePermissions = new Dictionary<string, List<string>>
         {
             { 
-                "Agent", 
+                "Admin", 
                 allSystemPermissions.ToList()
+            },
+            { 
+                "Agent", 
+                [
+                    AppPermissions.ReplyTickets.Create
+                ]
             },
             { 
                 "Client", 
                 new List<string> ()
-            }
+            },
+            
         };
 
         var rolePermissionsDictForCache = new Dictionary<string, List<string>>();

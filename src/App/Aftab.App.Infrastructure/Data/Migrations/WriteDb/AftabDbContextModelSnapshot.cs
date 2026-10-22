@@ -23,6 +23,33 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Aftab.App.Domain.Organization.Models.Organ", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organs");
+                });
+
             modelBuilder.Entity("Aftab.App.Domain.People.Models.Person", b =>
                 {
                     b.Property<Guid>("Id")
@@ -33,6 +60,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
 
                     b.Property<DateTime>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("OrganId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("RoleType")
                         .IsRequired()
@@ -93,6 +123,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<Guid?>("OrganId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
@@ -383,6 +416,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.WriteDb
                                 .HasColumnType("timestamp with time zone");
 
                             b1.Property<bool>("IsDeleted")
+                                .HasColumnType("boolean");
+
+                            b1.Property<bool>("IsVisible")
                                 .HasColumnType("boolean");
 
                             b1.Property<Guid>("ReplierId")

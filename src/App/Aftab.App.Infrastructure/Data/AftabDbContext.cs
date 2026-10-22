@@ -1,6 +1,8 @@
 using Aftab.App.Application.Abstraction;
+using Aftab.App.Domain.Organization.Models;
 using Aftab.App.Domain.People.Models;
 using Aftab.App.Domain.Ticketing.Models;
+using Aftab.App.Infrastructure.Organization.Configurations;
 using Aftab.App.Infrastructure.People.Configurations;
 using Aftab.App.Infrastructure.Ticketing.Configurations;
 using Aftab.Shared.Infrastructure.Outbox.Configurations;
@@ -15,12 +17,14 @@ public sealed class AftabDbContext(DbContextOptions<AftabDbContext> options) : I
 {
     public DbSet<Ticket> Tickets => Set<Ticket>();
     public DbSet<Person> People => Set<Person>();
+    public DbSet<Organ> Organs => Set<Organ>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.ApplyConfiguration(new TicketingConfiguration());
         builder.ApplyConfiguration(new PeopleConfiguration());
+        builder.ApplyConfiguration(new OrganizationConfiguration());
         builder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());
         builder.ApplyConfiguration(new OutboxMessageConfiguration());
     }

@@ -1,4 +1,5 @@
 using Aftab.App.Domain.Identity.Enums;
+using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.People.Models;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.Shared.Infrastructure.Converters;
@@ -14,6 +15,10 @@ internal sealed class PeopleConfiguration : IEntityTypeConfiguration<Person>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasConversion<PrefixedGuidEfConverter<PersonId>>();
+        
+        builder.Property(x => x.OrganId)
+            .HasConversion<PrefixedGuidEfConverter<OrganId>>()
+            .IsRequired(false);
 
         builder.ComplexProperty(x => x.FullName, fullNameBuilder =>
         {

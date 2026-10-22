@@ -5,5 +5,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\Features\" />
+    <Folder Include="Organization\Features\Queries\" />
   </ItemGroup>
 </Project>

@@ -20,6 +20,7 @@ internal sealed class GetTicketsEndpoint : IEndpoint
         TicketDepartment? FilterByDepartment,
         TicketStatus? FilterByStatus,
         string? FilterByPersonId,
+        string? FilterByOrganId,
         int PageIndex = 1,
         int PageSize = 10);
 
@@ -30,27 +31,41 @@ internal sealed class GetTicketsEndpoint : IEndpoint
                 ClaimsPrincipal user,
                 ISender sender) =>
             {
-                bool agent = user.IsInRole("Agent");
+                bool isAdmin = user.IsInRole("Admin");
+                bool isAgent = user.IsInRole("Agent");
                 string? currentPersonId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
                                         user.FindFirstValue("sub");
                 Result<PaginatedResult<GetTicketsQuery.Result>> result = await sender.Send(ToQuery(
-                    request, agent, currentPersonId));
+                    request, 
+                    isAdmin,
+                    isAgent,
+                    currentPersonId));
                 return result.Match(Results.Ok, ApiResults.Problem);
             })
             .WithTags(Tags.Ticketing)
             .RequireAuthorization();
     }
 
-    private static GetTicketsQuery ToQuery(GetTicketsRequest request, bool isAgent, string? currentPersonId)
+    private static GetTicketsQuery ToQuery(
+        GetTicketsRequest request,
+        bool isAdmin,
+        bool isAgent,
+        string? currentPersonId)
     {
-        string personId = isAgent ? request.FilterByPersonId : currentPersonId;
-        Console.WriteLine(personId);
+#pragma warning disable S125
+        // string personId = isAdmin || isAgent ? request.FilterByPersonId : currentPersonId;
+        // string? filteredByOrganId = isAdmin ? request.FilterByOrganId : null;
+        
+        bool onlyVisibleReplies = !(isAdmin || isAgent);
         return new GetTicketsQuery(
+            currentPersonId!,
             request.SearchString,
             request.SortByPriority,
+            onlyVisibleReplies,
             request.FilterByDepartment,
             request.FilterByStatus,
-            personId,
+            request.FilterByPersonId,
+            request.FilterByOrganId,
             request.PageIndex,
             request.PageSize);
     }

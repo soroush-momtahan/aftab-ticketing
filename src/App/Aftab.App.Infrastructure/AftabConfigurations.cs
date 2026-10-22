@@ -1,6 +1,7 @@
 using Aftab.App.Application.Abstraction;
 using Aftab.App.Application.Identity.Services;
 using Aftab.App.Application.Ticketing.Services;
+using Aftab.App.Domain.Organization.Repository;
 using Aftab.App.Domain.People.Models;
 using Aftab.App.Domain.People.Repository;
 using Aftab.App.Domain.Ticketing.Repository;
@@ -8,6 +9,7 @@ using Aftab.App.Infrastructure.Data;
 using Aftab.App.Infrastructure.Data.ReadDb;
 using Aftab.App.Infrastructure.Identity.ErrorDescriptor;
 using Aftab.App.Infrastructure.Identity.Services;
+using Aftab.App.Infrastructure.Organization.Repository;
 using Aftab.App.Infrastructure.People.Repository;
 using Aftab.App.Infrastructure.Ticketing.Repository;
 using Aftab.App.Infrastructure.Ticketing.Services;
@@ -58,6 +60,7 @@ public static class AftabConfigurations
         builder.EnrichNpgsqlDbContext<AftabDbContext>();
         builder.Services.AddScoped<IPeopleRepository, PeopleRepository>();
         builder.Services.AddScoped<ITicketingRepository, TicketingRepository>();
+        builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         builder.Services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<AftabDbContext>());
         return builder;
     }
@@ -66,6 +69,7 @@ public static class AftabConfigurations
     {
         builder.AddNpgsqlDbContext<AftabReadDbContext>(connString);
         builder.Services.AddScoped<ITicketingQueryService, TicketingQueryService>();
+        builder.Services.AddScoped<ITicketingReporterQueryService, TicketingReporterQueryService>();
         return builder;
     }
     private static void AddAspIdentityServices(this IHostApplicationBuilder builder)

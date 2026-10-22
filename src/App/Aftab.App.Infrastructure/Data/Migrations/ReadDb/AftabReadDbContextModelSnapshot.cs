@@ -23,6 +23,33 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketReporterView", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("OrganId")
+                        .HasColumnType("uuid");
+
+                    b.ComplexCollection(typeof(List<Dictionary<string, object>>), "Statuses", "Aftab.App.Application.Ticketing.Services.TicketReporterView.Statuses#TicketReporterStatusView", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Status");
+
+                            b1.Property<Guid>("TicketId");
+
+                            b1
+                                .ToJson("Statuses")
+                                .HasColumnType("jsonb");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TicketReporterViews");
+                });
+
             modelBuilder.Entity("Aftab.App.Application.Ticketing.Services.TicketView", b =>
                 {
                     b.Property<Guid>("Id")
@@ -49,6 +76,9 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("OrganId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
 
@@ -72,6 +102,8 @@ namespace Aftab.App.Infrastructure.Data.Migrations.ReadDb
                                 .IsRequired();
 
                             b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsVisible");
 
                             b1.Property<string>("ReplierDisplayName")
                                 .IsRequired();

@@ -1,4 +1,5 @@
 using Aftab.App.Application.Ticketing.Services;
+using Aftab.App.Domain.Organization.ValueObjects;
 using Aftab.App.Domain.People.ValueObjects;
 using Aftab.App.Domain.Ticketing.Enums;
 using Aftab.App.Infrastructure.Data.ReadDb;
@@ -20,15 +21,46 @@ internal sealed class TicketingQueryService(
         return await dbContext.TicketViews.SingleOrDefaultAsync(x => x.Id == ticketId, cancellationToken);
     }
 
-    public async Task<List<TicketView>> GetAllAsync(string? searchString, bool sortByPriority, TicketDepartment? filterByDepartment,
-        TicketStatus? filterByStatus, PersonId? filterByPersonId, int pageIndex, int pageSize,
+    public async Task<List<TicketView>> GetAllAsync(
+        string? searchString,
+        bool sortByPriority,
+        bool onlyVisibleReplies,
+        TicketDepartment? filterByDepartment,
+        TicketStatus? filterByStatus,
+        PersonId? filterByPersonId,
+        OrganId? filterByOrganId,
+        int pageIndex,
+        int pageSize,
         CancellationToken cancellationToken)
     {
         List<TicketView> result = await dbContext.TicketViews
             .AsNoTracking()
-            .ApplyFilters(searchString, filterByDepartment, filterByStatus, filterByPersonId)
+            .ApplyFilters(
+                searchString,
+                filterByDepartment,
+                filterByStatus,
+                filterByPersonId,
+                filterByOrganId)
             .ApplySorting(sortByPriority)
             .ApplyPagination(pageIndex, pageSize)
+            .Select(x => new TicketView()
+            {
+                Id = x.Id,
+                Content = x.Content,
+                CreatedAt = x.CreatedAt,
+                DeletedAt = x.DeletedAt,
+                OrganId = x.OrganId,
+                PersonId = x.PersonId,
+                Department = x.Department,
+                DisplayName = x.DisplayName,
+                ModifiedAt = x.ModifiedAt,
+                Priority = x.Priority,
+                Status = x.Status,
+                Title = x.Title,
+                Replies = onlyVisibleReplies ? 
+                    x.Replies.Where(r => r.IsVisible == onlyVisibleReplies).ToList() :
+                    x.Replies.Where(r => r.IsVisible == onlyVisibleReplies || r.ReplierId == x.PersonId).ToList()
+            })
             .ToListAsync(cancellationToken);
         return result;
     }
