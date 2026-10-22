@@ -15,7 +15,8 @@ public record GetTicketQuery(
         string Id,
         string ReplierId,
         string ReplierDisplayName,
-        string Content);
+        string Content,
+        bool IsVisible);
 
     public record TicketDto(
         string Id,
@@ -59,6 +60,7 @@ public record GetTicketQuery(
             replyTicketView.Id,
             replyTicketView.ReplierId,
             replyTicketView.ReplierDisplayName,
-            replyTicketView.Content);
+            replyTicketView.Content,
+            replyTicketView.IsVisible);
     }
 }

@@ -23,7 +23,8 @@ internal sealed class GetTicketEndpoint : IEndpoint
             string Id,
             string ReplierId,
             string ReplierDisplayName,
-            string Content);
+            string Content,
+            bool IsVisible);
 
         public sealed record TicketDto(
             string Id,
@@ -87,6 +88,7 @@ internal sealed class GetTicketEndpoint : IEndpoint
             replyTicketDto.Id,
             replyTicketDto.ReplierId,
             replyTicketDto.ReplierDisplayName,
-            replyTicketDto.Content);
+            replyTicketDto.Content,
+            replyTicketDto.IsVisible);
     }
 }

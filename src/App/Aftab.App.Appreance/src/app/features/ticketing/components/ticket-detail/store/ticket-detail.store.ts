@@ -137,6 +137,7 @@ export interface ReplyVm extends ReplyTicketDto {
   initial: string;
   canEdit: boolean;
   canDelete: boolean;
+  canChangeVisibility: boolean;
 }
 
 export const TicketDetailStore = signalStore(
@@ -169,6 +170,7 @@ export const TicketDetailStore = signalStore(
           initial: r.replierDisplayName.charAt(0),
           canEdit: isOwn || isAdmin,
           canDelete: isOwn || isAdmin,
+          canChangeVisibility: isAdmin,
         };
       });
     });
@@ -190,6 +192,8 @@ export const TicketDetailStore = signalStore(
       domain.updateReply({ ticketId: domain.selectedTicketId()!, replyId, content }),
     removeReply: (replyId: string) =>
       domain.deleteReply({ ticketId: domain.selectedTicketId()!, replyId }),
+    updateReplyVisibility: (replyTicketId: string, visibility: boolean) =>
+      domain.editReplyVisibility({ ticketId: domain.selectedTicketId()!, replyTicketId, visibility }),
   })),
 
   // آیدی از روت خوانده می‌شود؛ با تغییر پارامتر (رفتن از یک تیکت به تیکت دیگر) هم دوباره لود می‌شود

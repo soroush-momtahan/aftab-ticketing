@@ -14,7 +14,7 @@ internal sealed class ChangeReplyTicketVisibilityEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("/api/tickets/{ticketId}/reply/{replyTicketId}", async (
+        app.MapPatch("/api/tickets/{ticketId}/replies/{replyTicketId}/visibility", async (
             string ticketId,
             string replyTicketId,
             bool visibility,

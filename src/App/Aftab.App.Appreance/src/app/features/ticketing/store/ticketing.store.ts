@@ -215,7 +215,6 @@
 //   }),
 // );
 
-
 // مسیر: ticketing/store/ticketing.store.ts
 import {
   AddTicketRequest,
@@ -223,6 +222,7 @@ import {
   GetTicketsRequest,
   ReplyTicketDto,
   TicketingService,
+  UpdateReplyVisibilityRequest,
 } from '../services/ticketing.service';
 import {
   patchState,
@@ -330,7 +330,9 @@ export const TicketingStore = signalStore(
         switchMap((id) =>
           ticketingService.getTicket(id).pipe(
             tapResponse({
-              next: (res) => patchState(store, setEntity(mapToEntity(res)), setFulfilled()),
+              next: (res) => {
+                patchState(store, setEntity(mapToEntity(res)), setFulfilled());
+              },
               error: (err: ProblemDetails) => patchState(store, setRejected(err)),
             }),
           ),
@@ -379,6 +381,28 @@ export const TicketingStore = signalStore(
             }),
           ),
         ),
+      ),
+    ),
+
+    editReplyVisibility: rxMethod<UpdateReplyVisibilityRequest>(
+      pipe(
+        exhaustMap((req) => {
+          return ticketingService.updateReplyVisibility(req).pipe(
+            tapResponse({
+              next: (res) =>{
+
+                patchState(
+                  store,
+                  setFulfilled(),
+                );
+                store.loadSingleTicket(req.ticketId);
+              },
+              error: (err: ProblemDetails) => {
+                patchState(store, setRejected(err));
+              }
+            }),
+          );
+        }),
       ),
     ),
 
@@ -469,10 +493,10 @@ export const TicketingStore = signalStore(
       ),
     ),
   })),
-    // withHooks({
-    //   onInit(store) {
-    //     store.loadTickets(store.filters);
-    //   },
-    // }),
+  // withHooks({
+  //   onInit(store) {
+  //     store.loadTickets(store.filters);
+  //   },
+  // }),
   // توجه: هوک لود لیست از اینجا به TicketListStore منتقل شده (توضیحات در پیام).
 );

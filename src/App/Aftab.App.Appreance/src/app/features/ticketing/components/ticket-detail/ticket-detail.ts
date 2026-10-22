@@ -118,6 +118,7 @@ export class TicketDetail {
 
   // ---------- Edit dialog ----------
   protected readonly editing = signal<ReplyVm | null>(null);
+  protected readonly visibilityIconSwitcher = signal(false);
   protected readonly editModel = signal({ content: '' });
   protected readonly editForm = form(this.editModel, (f) => {
     required(f.content, { message: 'متن پاسخ نمی‌تواند خالی باشد' });
@@ -156,5 +157,8 @@ export class TicketDetail {
   protected closeDialogs() {
     this.editing.set(null);
     this.deletingId.set(null);
+  }
+  protected onUpdateReplyVisibility(replyId: string, visibility: boolean) {
+    this.store.updateReplyVisibility(replyId, !visibility);
   }
 }

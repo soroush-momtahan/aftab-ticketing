@@ -118,6 +118,12 @@ import { Observable } from 'rxjs';
 import { TicketStatus } from '../enums/ticket-status.enum';
 import { TicketsPage } from '../models/tickets-page.model';
 
+export interface UpdateReplyVisibilityRequest {
+  ticketId: string;
+  replyTicketId: string;
+  visibility: boolean;
+}
+
 export interface AddTicketRequest {
   title: string;
   content: string;
@@ -158,6 +164,7 @@ export interface ReplyTicketDto {
   replierId: string;
   replierDisplayName: string;
   content: string;
+  isVisible: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -211,6 +218,14 @@ export class TicketingService {
     let params = new HttpParams().set('newContent', newContent);
     return this.http.patch<void>(
       `${this.baseUrl}/tickets/${ticketId}/replies/${replyTicketId}/content`,
+      null,
+      { params },
+    );
+  }
+  updateReplyVisibility(req: UpdateReplyVisibilityRequest) {
+    let params = new HttpParams().set('visibility', req.visibility);
+    return this.http.patch<void>(
+      `${this.baseUrl}/tickets/${req.ticketId}/replies/${req.replyTicketId}/visibility`,
       null,
       { params },
     );
